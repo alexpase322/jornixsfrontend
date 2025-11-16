@@ -1,0 +1,34 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
+    <h2 class="text-2xl font-bold mb-4 text-white">Edit Worker</h2>
+    <form [formGroup]="editForm" (ngSubmit)="saveChanges()">
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2">Full Name</label>
+            <input formControlName="fullName" class="form-input">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2">Hourly Rate</label>
+            <input formControlName="hourlyRate" type="number" class="form-input">
+        </div>
+        <div class="mb-4">
+            <label for="workLocationId" class="block text-gray-300 text-sm font-bold mb-2">Workplace</label>
+            <select id="workLocationId" formControlName="workLocationId" class="form-input">
+                <option [ngValue]="null">Unassigned</option>
+                <option *ngFor="let loc of locations()" [value]="loc.id">{{ loc.name }}</option>
+            </select>
+        </div>
+        <div class="mb-6">
+            <label class="flex items-center text-gray-300">
+                <input formControlName="active" type="checkbox" class="form-checkbox">
+                <span class="ml-2">Active Account</span>
+            </label>
+        </div>
+        <div class="flex items-center gap-4">
+            <button type="submit" [disabled]="editForm.invalid" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full disabled:bg-gray-500">
+                Save Changes
+            </button>
+            <a routerLink="/admin/workers" class="bg-gray-600 hover:bg-gray-700 text-white text-center font-bold py-2 px-4 rounded w-full">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>

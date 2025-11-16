@@ -1,0 +1,16 @@
+{
+  "LOGIN": {
+    "TITLE": "Iniciar Sesión",
+    "SUBTITLE": "Accede a tu cuenta de ChronoTrack",
+    "EMAIL_LABEL": "Correo Electrónico",
+    "PASSWORD_LABEL": "Contraseña",
+    "BUTTON": "Entrar",
+    "FORGOT_PASSWORD": "¿Olvidaste tu contraseña?",
+    "ERROR_CREDENTIALS": "Credenciales incorrectas. Por favor, inténtalo de nuevo."
+  },
+  "NAV": {
+    "LOGOUT": "Cerrar Sesión",
+    "PROFILE": "Mi Perfil",
+    "TIMESHEETS": "Hojas de Horas"
+  }
+}

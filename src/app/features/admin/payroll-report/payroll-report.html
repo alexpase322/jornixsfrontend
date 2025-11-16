@@ -1,0 +1,141 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6">
+  <h2 class="text-2xl font-bold text-white">Payroll Reports</h2>
+  
+  <form [formGroup]="reportForm" (ngSubmit)="generateReport()" class="p-4 bg-gray-700 rounded-md space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-300">Report Type</label>
+            <select formControlName="reportType" class="form-input mt-1">
+                <option value="CONSOLIDATED">Consolidated</option>
+                <option value="DETAILED">Detailed by Worker</option>
+            </select>
+        </div>
+
+        <div *ngIf="reportForm.get('reportType')?.value === 'DETAILED'">
+            <label class="block text-sm font-medium text-gray-300">Worker</label>
+            <select formControlName="workerId" class="form-input mt-1">
+                <option [ngValue]="null" disabled>Select a worker...</option>
+                <option *ngFor="let worker of workers()" [value]="worker.id">{{ worker.fullName }}</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-300">Start Date</label>
+            <input type="date" formControlName="startDate" class="form-input mt-1">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-300">End Date</label>
+            <input type="date" formControlName="endDate" class="form-input mt-1">
+        </div>
+    </div>
+    <button type="submit" [disabled]="reportForm.invalid || isLoading()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md disabled:bg-gray-500 w-full md:w-auto">
+        {{ isLoading() ? 'Generating...' : 'Generate Report' }}
+    </button>
+  </form>
+
+  <div *ngIf="consolidatedReport() as r">
+    <div class="flex justify-between items-center">
+      <h3 class="text-xl font-bold">
+        Consolidated Report: {{ r.startDate | date:'d/MM/y' }} - {{ r.endDate | date:'d/MM/y' }}
+      </h3>
+      <div class="flex gap-2">
+        <button (click)="downloadPdf()" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-3 rounded text-sm">
+          Export PDF
+        </button>
+        <button (click)="downloadExcel()" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-3 rounded text-sm">
+          Export Excel
+        </button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-white">
+        <thead>
+          <tr class="border-b border-gray-700">
+            <th class="py-3 px-4 text-left text-gray-400">Worker</th>
+            <th class="py-3 px-4 text-right text-gray-400">Regular Hours</th>
+            <th class="py-3 px-4 text-right text-gray-400">Overtime</th>
+            <th class="py-3 px-4 text-right text-gray-400">Total Hours</th>
+            <th class="py-3 px-4 text-right text-gray-400">Total Amount Payable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of r.entries" class="border-b border-gray-600">
+            <td class="py-3 px-4">{{ entry.workerName }}</td>
+            <td class="py-3 px-4 text-right font-mono">{{ entry.totalRegularHours.toFixed(2) }}</td>
+            <td class="py-3 px-4 text-right font-mono">{{ entry.totalOvertimeHours.toFixed(2) }}</td>
+            <td class="py-3 px-4 text-right font-bold font-mono">{{ entry.totalHours.toFixed(2) }}</td>
+            <td class="py-3 px-4 text-right font-bold font-mono text-green-400">{{ entry.totalPay | currency }}</td>
+          </tr>
+        </tbody>
+        <tfoot class="border-t-2 border-gray-500">
+          <tr class="font-bold text-lg">
+            <td colspan="4" class="py-4 px-4 text-right">GRAND TOTAL</td>
+            <td class="py-4 px-4 text-right font-mono text-green-300">{{ r.grandTotalPay | currency }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="detailedReport() as r">
+    <div class="flex justify-between items-center">
+      <h3 class="text-xl font-bold text-white">Detailed Report for: <span class="text-blue-400">{{ r.workerName }}</span></h3>
+      <div class="flex gap-2">
+        <button (click)="downloadDetailedPdf()" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-3 rounded text-sm">
+          Export PDF
+        </button>
+        <button (click)="downloadDetailedExcel()" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-3 rounded text-sm">
+          Export Excel
+        </button>
+      </div>
+    </div>
+    <p class="text-gray-400">Period: {{ r.startDate | date:'d/MM/y' }} - {{ r.endDate | date:'d/MM/y' }}</p>
+
+    <div *ngFor="let weeklySummary of r.weeklySummaries" class="bg-gray-700 p-4 rounded-lg mt-4">
+      <h4 class="text-lg font-bold mb-2">Week: {{ weeklySummary.workWeek.startDate | date:'d MMM' }} - {{ weeklySummary.workWeek.endDate | date:'d MMM' }}</h4>
+      <table class="min-w-full text-sm mb-2">
+        <thead>
+          <tr class="border-b border-gray-600">
+            <th class="th-style">Date</th>
+            <th class="th-style">Workplaces</th>
+            <th class="th-style">Income</th>
+            <th class="th-style">Home Lunch</th>
+            <th class="th-style">End of Lunch</th>
+            <th class="th-style">Exit</th>
+            <th class="th-style text-right">Hours Worked</th>
+            <th class="th-style text-right">Rate</th>
+            <th class="th-style text-right">Total Day</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let daily of r.dailySummariesByWeek[weeklySummary.workWeek.id]" class="border-b border-gray-500">
+            <td class="td-style">{{ daily.date | date:'EEEE, d' }}</td>
+            <td class="td-style">{{ daily.workLocationName }}</td>
+            <td class="td-style font-mono">{{ daily.clockInTime?.slice(0, 5) }}</td>
+            <td class="td-style font-mono">{{ daily.startLunchTime?.slice(0, 5) }}</td>
+            <td class="td-style font-mono">{{ daily.endLunchTime?.slice(0, 5) }}</td>
+            <td class="td-style font-mono">{{ daily.clockOutTime?.slice(0, 5) }}</td>
+            <td class="td-style text-right font-mono">{{ daily.totalHours.toFixed(2) }}</td>
+            <td class="td-style text-right font-mono">{{ daily.dailyRate | currency }}</td>
+            <td class="td-style text-right font-mono font-bold">{{ daily.totalPay | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="grid grid-cols-4 gap-2 text-center bg-gray-600 p-2 rounded-md font-bold">
+        <div><span class="font-normal text-gray-300">H. Regular: </span>{{ weeklySummary.regularHours.toFixed(2) }}</div>
+        <div><span class="font-normal text-gray-300">H. Bonus features: </span>{{ weeklySummary.overtimeHours.toFixed(2) }}</div>
+        <div><span class="font-normal text-gray-300">H. Totals: </span>{{ weeklySummary.totalHours.toFixed(2) }}</div>
+        <div class="text-green-400"><span class="font-normal text-gray-300">Weekly Payment: </span>{{ weeklySummary.totalPay | currency }}</div>
+      </div>
+    </div>
+    
+    <div class="mt-6 pt-4 border-t-2 border-gray-500 text-right">
+        <h4 class="text-2xl font-bold">Total for the Period: <span class="text-green-300">{{ r.grandTotalPay | currency }}</span></h4>
+        <p class="text-gray-400">
+            Total Hours: {{ r.grandTotalHours.toFixed(2) }} 
+            (Regular: {{ r.grandTotalRegularHours.toFixed(2) }} + Bonus Features: {{ r.grandTotalOvertimeHours.toFixed(2) }})
+        </p>
+    </div>
+  </div>
+</div>

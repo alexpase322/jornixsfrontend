@@ -1,0 +1,141 @@
+<div class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+  <div class="max-w-4xl w-full bg-gray-800 p-8 rounded-lg shadow-lg">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-extrabold text-white">Company Registration</h2>
+      <p class="mt-2 text-gray-400">Create your administrator account and register your company.</p>
+    </div>
+    
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+        
+        <div class="space-y-4">
+          <h3 class="text-xl font-bold text-white border-b border-gray-600 pb-2">Company Information</h3>
+          <div>
+            <label for="companyName" class="block text-gray-300 text-sm font-bold mb-2">Company Name</label>
+            <input id="companyName" formControlName="companyName" class="form-input">
+          </div>
+          <div>
+            <label for="companyAddress" class="block text-gray-300 text-sm font-bold mb-2">Company Management</label>
+            <input id="companyAddress" formControlName="companyAddress" class="form-input">
+          </div>
+          <div>
+            <label for="ein" class="block text-gray-300 text-sm font-bold mb-2">EIN (Employer Identification Number)</label>
+            <input id="ein" formControlName="ein" class="form-input">
+          </div>
+           <div>
+            <label for="companyPhoneNumber" class="block text-gray-300 text-sm font-bold mb-2">Phone Number (Optional)</label>
+            <input id="companyPhoneNumber" formControlName="companyPhoneNumber" class="form-input">
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-xl font-bold text-white border-b border-gray-600 pb-2">Administrator Information</h3>
+          <div>
+            <label for="adminFullName" class="block text-gray-300 text-sm font-bold mb-2">Full name</label>
+            <input id="adminFullName" formControlName="adminFullName" class="form-input">
+          </div>
+           <div>
+            <label for="adminEmail" class="block text-gray-300 text-sm font-bold mb-2">E-mail</label>
+            <input id="adminEmail" type="email" formControlName="adminEmail" class="form-input">
+          </div>
+           <div>
+            <label for="adminPassword" class="block text-gray-300 text-sm font-bold mb-2">Password</label>
+            <input id="adminPassword" type="password" formControlName="adminPassword" class="form-input" placeholder="Mínimo 8 caracteres">
+          </div>
+        </div>
+
+        <div class="md:col-span-2 mt-4">
+            <label class="flex items-center text-gray-400">
+              <input type="checkbox" formControlName="termsAccepted" class="form-checkbox">
+              <span class="ml-2">He leído y acepto los 
+                <button type="button" (click)="isTermsModalOpen.set(true)" class="text-violet-400 hover:underline">
+                  Terms and Conditions
+                </button> of the service.
+              </span>
+            </label>
+          </div>
+      </div>
+      
+      <button type="submit" [disabled]="registrationForm.invalid || !inviteToken" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md disabled:bg-gray-500 disabled:cursor-not-allowed">
+        Create Account and Register Company
+      </button>
+    </form>
+
+    <div *ngIf="errorMessage()" class="mt-4 text-center bg-red-800 border border-red-600 text-red-200 px-4 py-3 rounded-md">
+      {{ errorMessage() }}
+    </div>
+  </div>
+</div>
+
+<app-modal *ngIf="isTermsModalOpen()" title="Términos y Condiciones del Servicio" (close)="isTermsModalOpen.set(false)">
+  <div class="prose prose-invert max-w-none text-gray-300">
+      
+      <h4>Date of last update: October 14, 2025</h4>
+      
+      <p>
+        These Terms and Conditions of Service (“Terms”) constitute a legally binding agreement between your company (“the Customer,” “You”) and <strong>APV Solutions LLC</strong> (“the Company,” “We,” ‘Our’) governing your use of the Jornixs platform (“the Service”).
+      </p>
+      <p>
+        By subscribing to, accessing, or using the Service, you represent that you have read, understood, and agree to be bound by these Terms in their entirety. If you do not agree with any part of the terms, you should not use the Service.
+      </p>
+
+      <h5>1. Service Definition</h5>
+      <p>
+        Jornixs is a web application designed for comprehensive work time management. The Service includes, among others, the following features: recording of arrival, departure, and lunch times; location validation by geolocation; calculation of regular and overtime hours; generation of payroll reports; and a timesheet approval workflow system. The Service is accessible through modern web browsers and requires an active internet connection.
+      </p>
+
+      <h5>2. Accounts, Roles, and Responsibilities</h5>
+      <ul>
+        <li><strong>Company Account:</strong> Initial registration through our payment gateway creates a Company Account. The person whose payment details are used will be considered the initial account owner..</li>
+        <li><strong>Administrator Role:</strong> Users designated as Administrators have full control over the Company Account, including the ability to add, edit, and deactivate Worker profiles, manage Workplaces, approve/reject timesheets, and generate reports. You are responsible for all actions taken by Administrator accounts associated with your Company..</li>
+        <li><strong>Role of Worker:</strong> Users designated as Workers have limited access to record their hours and view their own history..</li>
+        <li><strong>Account Security:</strong> You are responsible for maintaining the confidentiality of all your users' access credentials (passwords). You agree to notify Jornixs immediately of any unauthorized use of your accounts..</li>
+      </ul>
+
+      <h5>3. Subscriptions, Billing, and Payments</h5>
+      <ul>
+        <li><strong>Billing Cycle:</strong> The Service is billed in advance on a recurring basis (monthly or annually). Your subscription will automatically renew at the end of each billing cycle..</li>
+        <li><strong>Cancellation:</strong> You can cancel automatic renewal at any time through the billing panel. The cancellation will take effect at the end of the current billing cycle. No refunds will be given for partial subscription periods..</li>
+        <li><strong>Plans and Limits:</strong> We offer different subscription plans based on the number of active “Worker” users your Company can register. If you reach your plan's limit, you will need to upgrade your subscription in order to invite new workers.</li>
+        <li><strong>Payment Processor:</strong> All payments are handled by our third-party provider, Stripe. Jornixs does not store, process, or have access to your full credit card details..</li>
+      </ul>
+
+      <h5>4. Customer Responsibilities and Legal Compliance</h5>
+      <ul>
+        <li><strong>Cumplimiento con la FLSA y Leyes Estatales:</strong> Usted reconoce que la Ley de Normas Laborales Justas (FLSA) y las leyes laborales de su estado exigen el mantenimiento de registros precisos de las horas trabajadas. Es su exclusiva responsabilidad asegurar el cumplimiento de dichas normativas, incluyendo el cálculo correcto de horas extras y el pago de salarios.</li>
+        <li><strong>Consentimiento para la Geolocalización:</strong> El Servicio incluye una función de geolocalización. Usted se compromete y garantiza que obtendrá un consentimiento explícito y por escrito de cada uno de sus Trabajadores antes de utilizar esta función, y que la usará únicamente para fines comerciales legítimos durante las horas de trabajo.</li>
+        <li><strong>Privacidad de los Datos del Empleado:</strong> Usted es el "Controlador de Datos" de la información personal de sus empleados. Es su responsabilidad cumplir con las leyes de privacidad de datos aplicables, como la CCPA en California.</li>
+      </ul>
+
+      <h5>5. Disclaimer of Warranties</h5>
+      <p>
+        THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE,” WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+      </p>
+
+      <h5>6. Limitation of Liability</h5>
+      <p>
+        TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL APV Solutions LLC BE LIABLE FOR ANY INDIRECT, PUNITIVE, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES. OUR TOTAL AGGREGATE LIABILITY FOR ANY CLAIM SHALL NOT EXCEED THE TOTAL AMOUNT PAID BY YOU TO THE COMPANY DURING THE THREE (3) MONTHS PRIOR TO THE CLAIM.
+      </p>
+      
+      <h5>7. Dispute Resolution and Applicable Law</h5>
+      <p>
+        These Terms shall be governed by the laws of the State of Delaware. Any dispute shall be resolved by binding arbitration in Wilmington, Delaware.
+      </p>
+
+      <h5>8. Termination</h5>
+      <p>
+        We may terminate or suspend your access to the Service immediately if you materially breach these Terms.
+      </p>
+
+      <h5>9. Changes to the Terms</h5>
+      <p>
+        We reserve the right to modify these Terms at any time. We will notify you of any material changes by email.
+      </p>
+
+      <h5>10. Contact</h5>
+      <p>
+        If you have any questions about these Terms, please contact us at <strong>contact@jornixs.com</strong>.
+      </p>
+
+    </div>
+</app-modal>

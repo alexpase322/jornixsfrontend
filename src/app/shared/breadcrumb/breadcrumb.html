@@ -1,0 +1,12 @@
+<nav class="text-sm text-gray-400" aria-label="Breadcrumb">
+  <ol class="list-none p-0 inline-flex">
+    <li class="flex items-center">
+      <a routerLink="/" class="hover:text-white">Inicio</a>
+    </li>
+    <li *ngFor="let item of items; let last = last" class="flex items-center">
+      <span class="mx-2">/</span>
+      <a *ngIf="!last" [routerLink]="item.url" class="hover:text-white">{{ item.label }}</a>
+      <span *ngIf="last" class="text-gray-500" aria-current="page">{{ item.label }}</span>
+    </li>
+  </ol>
+</nav>

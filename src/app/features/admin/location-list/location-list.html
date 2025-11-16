@@ -1,0 +1,32 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-white">Workplaces</h2>
+    <a routerLink="/admin/locations/new" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+      + New Location
+    </a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-white">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="py-3 px-4 text-left text-gray-400">Name</th>
+          <th class="py-3 px-4 text-left text-gray-400">Address</th>
+          <th class="py-3 px-4 text-left text-gray-400">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let loc of locations()" class="border-b border-gray-600 hover:bg-gray-700">
+          <td class="py-3 px-4">{{ loc.name }}</td>
+          <td class="py-3 px-4">{{ loc.address }}</td>
+          <td class="py-3 px-4 space-x-2">
+            <a [routerLink]="['/admin/locations', loc.id, 'edit']" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded">Edit</a>
+            <button (click)="deleteLocation(loc.id)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="locations().length === 0">
+          <td colspan="3" class="text-center py-8 text-gray-500">No jobs have been created..</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

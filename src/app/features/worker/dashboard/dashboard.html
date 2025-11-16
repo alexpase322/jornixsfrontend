@@ -1,0 +1,72 @@
+<div class="space-y-8">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1">
+      <h3 class="text-gray-400 text-sm font-medium">Current Status</h3>
+      <p class="text-3xl font-bold mt-2">{{ currentStatus() }}</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1 md:col-span-2">
+      <h3 class="text-gray-400 text-sm font-medium">Quick Actions</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        <button (click)="onClockIn()" 
+                [disabled]="currentStatus() !== 'Fuera de Oficina' && currentStatus() !== 'Jornada Finalizada'" 
+                class="action-button bg-green-600 hover:bg-green-700">
+          Mark Entry
+        </button>
+        <button (click)="onStartLunch()" 
+                [disabled]="currentStatus() !== 'Trabajando'" 
+                class="action-button bg-yellow-600 hover:bg-yellow-700">
+          Start Lunch
+        </button>
+        <button (click)="onEndLunch()" 
+                [disabled]="currentStatus() !== 'En Almuerzo'" 
+                class="action-button bg-blue-600 hover:bg-blue-700">
+          End Lunch
+        </button>
+        <button (click)="onClockOut()" 
+                [disabled]="currentStatus() !== 'Trabajando'" 
+                class="action-button bg-red-600 hover:bg-red-700">
+          Mark Exit
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold">Records of the Week</h3>
+      <button (click)="submitWeek()"
+              class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded disabled:bg-gray-500"
+              [disabled]="weeklyLogs().length === 0">
+       Send Week for Approval
+      </button>
+    </div>
+    <div *ngIf="successMessage()" class="mb-4 text-center bg-green-800 text-green-200 p-3 rounded-md">
+      {{ successMessage() }}
+    </div>
+    <div *ngIf="errorMessage()" class="mb-4 bg-red-800 text-red-200 px-4 py-3 rounded-md text-center">
+      <p>{{ errorMessage() }}</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full">
+        <thead>
+          <tr class="border-b border-gray-700">
+            <th class="py-3 px-4 text-left text-gray-400">Date</th>
+            <th class="py-3 px-4 text-left text-gray-400">Event</th>
+            <th class="py-3 px-4 text-left text-gray-400">Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of weeklyLogs()" class="border-b border-gray-600 hover:bg-gray-700">
+            <td class="py-3 px-4">{{ log.timestamp | date:'EEEE, d MMMM' }}</td>
+            <td class="py-3 px-4">{{ log.eventType.replace('_', ' ') }}</td>
+            <td class="py-3 px-4 font-mono">{{ log.timestamp | date:'HH:mm:ss' }}</td>
+          </tr>
+          <tr *ngIf="weeklyLogs().length === 0">
+            <td colspan="3" class="text-center py-8 text-gray-500">There are no records this week.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

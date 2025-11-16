@@ -1,0 +1,81 @@
+<div class="space-y-6 p-6">
+  <h1 class="text-3xl font-bold text-white">Managed Dashboard</h1>
+
+  <div *ngIf="stats() as statistics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+    
+    <div 
+      (click)="goToApprovals()" 
+      class="bg-yellow-500 p-6 rounded-lg cursor-pointer transition-transform hover:scale-105">
+      <h3 class="text-yellow-900 font-bold">Pending Actions</h3>
+      <p class="text-5xl font-extrabold text-yellow-900 mt-2">{{ pendingCount() }}</p>
+      <p class="text-yellow-800">Timesheets to be approved</p>
+    </div>
+
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-gray-400">Total Number of Workers</h3>
+      <p class="text-4xl font-bold mt-2">{{ statistics.totalWorkers }}</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-gray-400">Active Workers (Today)</h3>
+      <p class="text-4xl font-bold mt-2">{{ statistics.activeWorkersToday }}</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-gray-400">Total Hours (Week)</h3>
+      <p class="text-4xl font-bold mt-2">{{ statistics.totalHoursThisWeek.toFixed(2) }}</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-gray-400">Estimated Payroll (Week)</h3>
+      <p class="text-4xl font-bold mt-2">{{ statistics.estimatedWeeklyPayroll | currency }}</p>
+    </div>
+  </div>
+  <ng-template #loadingStats>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        @for (item of [1,2,3,4,5]; track $index) {
+            <div class="bg-gray-800 p-6 rounded-lg h-36 animate-pulse"></div>
+        }
+    </div>
+  </ng-template>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg lg:col-span-2">
+      <h3 class="text-xl font-bold mb-4 text-white">Hours Worked This Week (per Employee)</h3>
+      
+      <div class="relative h-96">
+        <canvas
+          baseChart
+          [data]="barChartData()"
+          [options]="barChartOptions()"
+          type="bar">
+        </canvas>
+      </div>
+
+      @if (barChartData().labels && barChartData().labels?.length === 0) {
+        <p class="text-gray-500 text-center py-10">There is no time data to display on the chart this week.</p>
+      }
+    </div>
+
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg lg:col-span-1">
+      <h3 class="text-xl font-bold mb-4 text-white">Pending Approval</h3>
+      <div class="space-y-3 max-h-96 overflow-y-auto">
+        @for (ts of pendingTimesheets(); track ts.timesheetId) {
+          <div class="bg-gray-700 p-3 rounded-md flex justify-between items-center">
+            <div>
+              <p class="font-semibold">{{ ts.workerName }}</p>
+              <p class="text-sm text-gray-400">
+                Week: {{ ts.weekStartDate | date:'d MMM' }} - {{ ts.weekEndDate | date:'d MMM' }}
+              </p>
+            </div>
+            <a [routerLink]="['/admin/approvals']" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1 px-2 rounded">
+              Review
+            </a>
+          </div>
+        }
+        @if (pendingCount() === 0) {
+          <p class="text-gray-500 text-center py-10">There are no outstanding timesheets.</p>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

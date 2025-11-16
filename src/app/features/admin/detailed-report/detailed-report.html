@@ -1,0 +1,103 @@
+<div *ngIf="report() as r; else loading" class="bg-gray-800 p-6 rounded-lg shadow-lg text-white space-y-6">
+
+  <div class="flex justify-between items-center">
+    <div>
+      <h2 class="text-2xl font-bold">Detailed Report: {{ r.workerName }}</h2>
+      <p class="text-gray-400">Showing report from {{ r.startDate | date:'d MMM, y' }} up to {{ r.endDate | date:'d MMM, y' }}</p>
+    </div>
+    <button (click)="goBack()" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded">
+      &larr; Return
+    </button>
+  </div>
+
+  <div *ngFor="let weeklySummary of r.weeklySummaries" class="bg-gray-700/50 p-4 rounded-lg">
+    <h4 class="text-lg font-bold mb-2 text-blue-300">
+      Week: {{ weeklySummary.workWeek.startDate | date:'d MMM' }} - {{ weeklySummary.workWeek.endDate | date:'d MMM, y' }}
+    </h4>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm mb-2">
+            <thead>
+              <tr class="border-b border-gray-600">
+                <th class="th-style">Date</th>
+                <th class="th-style">Workplace</th>
+                <th class="th-style">Income</th>
+                <th class="th-style">Home Lunch</th>
+                <th class="th-style">End of Lunch</th>
+                <th class="th-style">Outgoing</th>
+                <th class="th-style text-right">Hours Worked</th>
+                <th class="th-style text-right">Tarifa</th>
+                <th class="th-style text-right">Total Day</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="r.dailySummariesByWeek && r.dailySummariesByWeek[weeklySummary.workWeek.id] as dailySummaries; else noLogs">
+                <tr *ngFor="let daily of dailySummaries" class="border-b border-gray-500/50">
+                  <td class="td-style">{{ daily.date | date:'EEEE, d' }}</td>
+                  <td class="td-style">{{ daily.workLocationName }}</td>
+                  <td class="td-style font-mono">
+                    <button (click)="openCorrectionModal(daily, 'INGRESO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                      {{ daily.clockInTime | formatTime }}
+                    </button>
+                  </td>
+                  <td class="td-style font-mono">
+                    <button (click)="openCorrectionModal(daily, 'INICIO_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                      {{ daily.startLunchTime | formatTime }}
+                    </button>
+                  </td>
+                  <td class="td-style font-mono">
+                    <button (click)="openCorrectionModal(daily, 'FINAL_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                      {{ daily.endLunchTime | formatTime }}
+                    </button>
+                  </td>
+                  <td class="td-style font-mono">
+                    <button (click)="openCorrectionModal(daily, 'SALIDA', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                      {{ daily.clockOutTime | formatTime }}
+                    </button>
+                  </td>
+                  <td class="td-style text-right font-mono">{{ daily.totalHours.toFixed(2) }}</td>
+                  <td class="td-style text-right font-mono">{{ daily.dailyRate | currency }}</td>
+                  <td class="td-style text-right font-mono font-bold">{{ daily.totalPay | currency }}</td>
+                </tr>
+              </ng-container>
+
+              <ng-template #noLogs>
+                <tr>
+                  <td colspan="9" class="text-center py-4 text-gray-500">There are no detailed time records for this week..</td>
+                </tr>
+              </ng-template>
+            </tbody>
+        </table>
+    </div>
+    
+    <button (click)="openAddModal(weeklySummary.workWeek.startDate)" class="text-green-400 hover:underline text-xs mt-3">+ Add manual record</button>
+
+    <div class="grid grid-cols-4 gap-2 text-center bg-gray-900/50 p-2 rounded-md font-bold mt-4">
+      <div><span class="font-normal text-gray-400">H. Regular: </span>{{ weeklySummary.regularHours.toFixed(2) }}</div>
+      <div><span class="font-normal text-gray-400">H. Extras: </span>{{ weeklySummary.overtimeHours.toFixed(2) }}</div>
+      <div><span class="font-normal text-gray-400">H. Totals: </span>{{ weeklySummary.totalHours.toFixed(2) }}</div>
+      <div class="text-green-400"><span class="font-normal text-gray-300">Weekly Payment: </span>{{ weeklySummary.totalPay | currency }}</div>
+    </div>
+  </div>
+  
+  <div class="mt-6 pt-4 border-t-2 border-gray-500 text-right">
+      <h4 class="text-2xl font-bold">Total for the Period: <span class="text-green-300">{{ r.grandTotalPay | currency }}</span></h4>
+      <p class="text-gray-400">
+          Total Hours: {{ r.grandTotalHours.toFixed(2) }} 
+          (Regular: {{ r.grandTotalRegularHours.toFixed(2) }} + Bonus Features: {{ r.grandTotalOvertimeHours.toFixed(2) }})
+      </p>
+  </div>
+</div>
+
+<ng-template #loading>
+    <p class="text-center text-gray-400">Loading report...</p>
+</ng-template>
+
+<app-time-correction-modal
+  *ngIf="isModalOpen()"
+  [workerId]="report()?.workerId"
+  [logToEdit]="selectedLog()"
+  [dateForNewLog]="dateForNewLog()"
+  (close)="closeModal()"
+  (save)="onSaveCorrection()">
+</app-time-correction-modal>

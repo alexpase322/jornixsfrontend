@@ -1,0 +1,60 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+  <div class="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-4">
+    <h2 class="text-2xl font-bold text-white">Gestión de Trabajadores</h2>
+    <a routerLink="/admin/workers/invite" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-center">
+      + Invite Worker
+    </a>
+  </div>
+
+  <div class="mb-4 p-4 bg-gray-700 rounded-md">
+    <div class="flex items-center gap-6 text-gray-300">
+      <span class="font-bold">Show:</span>
+      <label class="flex items-center cursor-pointer">
+        <input type="radio" [formControl]="filterControl" value="ACTIVE" class="form-radio">
+        <span class="ml-2">Assets</span>
+      </label>
+      <label class="flex items-center cursor-pointer">
+        <input type="radio" [formControl]="filterControl" value="INACTIVE" class="form-radio">
+        <span class="ml-2">Inactive</span>
+      </label>
+      <label class="flex items-center cursor-pointer">
+        <input type="radio" [formControl]="filterControl" value="ALL" class="form-radio">
+        <span class="ml-2">All</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="py-3 px-4 text-left text-gray-400">name</th>
+          <th class="py-3 px-4 text-left text-gray-400">Email</th>
+          <th class="py-3 px-4 text-left text-gray-400">Workplace</th>
+          <th class="py-3 px-4 text-left text-gray-400">State</th>
+          <th class="py-3 px-4 text-left text-gray-400">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let worker of workers()" class="border-b border-gray-600 hover:bg-gray-700">
+          <td class="py-3 px-4 text-white">{{ worker.fullName }}</td>
+          <td class="py-3 px-4 text-gray-300">{{ worker.email }}</td>
+          <td class="py-3 px-4 text-gray-300">{{ worker.workLocationName }}</td>
+          <td class="py-3 px-4">
+            <span [ngClass]="worker.active ? 'bg-green-500' : 'bg-red-500'" class="px-2 py-1 text-xs font-bold text-white rounded-full">
+              {{ worker.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="py-3 px-4">
+            <button (click)="editWorker(worker.id)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded">
+              Editar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="workers().length === 0">
+            <td colspan="5" class="text-center py-8 text-gray-500">There are no employees matching the filter.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

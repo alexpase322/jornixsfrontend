@@ -1,0 +1,36 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+  <h2 class="text-2xl font-bold mb-6 text-white">
+    {{ isEditMode() ? 'Editar' : 'Nuevo' }} Workplace
+  </h2>
+  <form [formGroup]="locationForm" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="md:col-span-2">
+        <label class="block text-gray-300 text-sm font-bold mb-2">Name</label>
+        <input formControlName="name" class="form-input" placeholder="Ej: Oficina Principal">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-gray-300 text-sm font-bold mb-2">Address (Optional)</label>
+        <input formControlName="address" class="form-input" placeholder="Carrera 5 # 15-80">
+      </div>
+      <div>
+        <label class="block text-gray-300 text-sm font-bold mb-2">Latitude</label>
+        <input formControlName="latitude" type="number" class="form-input" placeholder="2.9273">
+      </div>
+      <div>
+        <label class="block text-gray-300 text-sm font-bold mb-2">Length</label>
+        <input formControlName="longitude" type="number" class="form-input" placeholder="-75.2819">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-gray-300 text-sm font-bold mb-2">Geolocation Radius (in meters)</label>
+        <input formControlName="geofenceRadiusMeters" type="number" class="form-input" placeholder="100">
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4 mt-6">
+      <a routerLink="/admin/locations" class="bg-gray-600 hover:bg-gray-700 text-white text-center font-bold py-2 px-4 rounded w-full">Cancelar</a>
+      <button type="submit" [disabled]="locationForm.invalid" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full disabled:bg-gray-500">
+        Save
+      </button>
+    </div>
+  </form>
+</div>

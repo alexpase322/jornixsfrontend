@@ -1,0 +1,74 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6">
+  <h2 class="text-2xl font-bold text-white">Timesheet History</h2>
+
+  <form [formGroup]="filterForm" class="p-4 bg-gray-700 rounded-md flex flex-col md:flex-row items-end gap-4">
+    <div *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
+      <label class="block text-sm font-medium text-gray-300">Worker</label>
+      <select formControlName="workerId" class="form-input mt-1">
+        <option [ngValue]="null">Everyone</option>
+        <option *ngFor="let worker of workers()" [value]="worker.id">{{ worker.fullName }}</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-300">Status</label>
+      <select formControlName="status" class="form-input mt-1">
+        <option value="">Everyone</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+  </form>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-white">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="th-style" *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">Worker</th>
+          <th class="th-style">Week</th>
+          <th class="th-style">Status</th>
+          <th class="th-style">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ts of timesheets()" class="border-b border-gray-600">
+          <td class="td-style" *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">{{ ts.workerName }}</td>
+          <td class="td-style">{{ ts.weekStartDate | date:'d MMM' }} - {{ ts.weekEndDate | date:'d MMM, y' }}</td>
+          <td class="td-style">
+            <span class="px-2 py-1 text-xs font-bold rounded-full"
+                  [ngClass]="{
+                    'bg-blue-500': ts.status === 'OPEN',
+                    'bg-yellow-500': ts.status === 'SUBMITTED',
+                    'bg-green-500': ts.status === 'APPROVED',
+                    'bg-red-500': ts.status === 'REJECTED'
+                  }">
+              {{ ts.status }}
+            </span>
+            <p *ngIf="ts.status === 'REJECTED' && ts.rejectionReason" class="text-xs text-red-300 mt-1 italic">
+              Reason: {{ ts.rejectionReason }}
+            </p>
+          </td>
+          <td class="td-style space-x-2">
+            <a *ngIf="userRole() === 'ROLE_ADMINISTRADOR'" 
+              [routerLink]="['/admin/reports/detailed', ts.workerId]" 
+              [queryParams]="{ startDate: ts.weekStartDate, endDate: ts.weekEndDate }"
+              class="bg-blue-600 hover:bg-blue-700 font-bold py-1 px-3 rounded text-sm">
+              See Details
+            </a>
+            <a *ngIf="userRole() === 'ROLE_TRABAJADOR'" 
+              [routerLink]="['/worker/reports/detailed']" 
+              [queryParams]="{ startDate: ts.weekStartDate, endDate: ts.weekEndDate }"
+              class="bg-blue-600 hover:bg-blue-700 font-bold py-1 px-3 rounded text-sm">
+              See Details
+            </a>
+            <button *ngIf="userRole() === 'ROLE_TRABAJADOR' && ts.status === 'REJECTED'" (click)="resubmit(ts.timesheetId)"
+                    class="bg-orange-500 hover:bg-orange-600 font-bold py-1 px-3 rounded text-sm">
+              Reopen for Editing
+            </button>
+          </td>
+        </tr>
+         <tr *ngIf="timesheets().length === 0">
+            <td colspan="4" class="text-center py-8 text-gray-500">No timesheets were found with the selected filters.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

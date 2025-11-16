@@ -1,0 +1,83 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.form-input {
+    @apply w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+.form-checkbox {
+    @apply h-5 w-5 bg-gray-700 border-gray-600 rounded text-blue-500 focus:ring-blue-500;
+}
+
+.nav-link {
+    @apply text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors;
+}
+
+.active-link {
+    @apply bg-gray-900 text-white;
+}
+
+.form-radio {
+    @apply h-4 w-4 bg-gray-900 border-gray-600 text-blue-500 focus:ring-blue-500;
+}
+
+.th-style {
+    @apply py-2 px-3 text-left text-gray-400 font-semibold;
+}
+.td-style {
+    @apply py-2 px-3;
+}
+
+[appAnimateOnScroll] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+[appAnimateOnScroll].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes gradient-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-animation 15s ease infinite;
+}
+
+/* 2. Animación para que el texto aparezca desde abajo */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  /* Hacemos que la animación esté 'congelada' en su estado inicial (invisible) */
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+/* 3. Clase que activa la animación cuando el elemento es visible */
+.is-visible .animate-fade-in-up {
+  animation-name: fade-in-up;
+  animation-duration: 0.8s;
+  animation-timing-function: ease-out;
+}
+
+/* 4. Clases de retraso para la animación escalonada */
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+.animation-delay-800 { animation-delay: 800ms; }

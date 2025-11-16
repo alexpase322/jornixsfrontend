@@ -1,0 +1,50 @@
+<div class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+  <div class="max-w-xl w-full bg-gray-800 p-8 rounded-lg shadow-lg">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-extrabold text-white">Complete your register</h2>
+      <p class="mt-2 text-gray-400">Finish creating your Jornixs account.</p>
+    </div>
+
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="mb-4">
+          <label class="block text-gray-300 text-sm font-bold mb-2">Full name</label>
+          <input formControlName="fullName" class="form-input">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-300 text-sm font-bold mb-2">Password</label>
+          <input formControlName="password" type="password" class="form-input" placeholder="Mínimo 8 caracteres">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-300 text-sm font-bold mb-2">Address</label>
+          <input formControlName="streetAddress" class="form-input">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-300 text-sm font-bold mb-2">City, State and zipcode</label>
+          <input formControlName="cityStateZip" class="form-input" placeholder="Ej: Neiva, HU 410001">
+
+          <div *ngIf="registrationForm.get('cityStateZip')?.invalid && (registrationForm.get('cityStateZip')?.touched || registrationForm.get('cityStateZip')?.dirty)">
+            <p *ngIf="registrationForm.get('cityStateZip')?.hasError('required')" class="text-red-400 text-xs mt-1">
+              This field is required.
+            </p>
+            <p *ngIf="registrationForm.get('cityStateZip')?.hasError('pattern')" class="text-red-400 text-xs mt-1">
+              The format must be “City, ST ZIP_CODE” (e.g., Miami, FL 33101).
+            </p>
+          </div>
+        </div>
+        <div class="mb-4 md:col-span-2">
+          <label class="block text-gray-300 text-sm font-bold mb-2">Social Security Number (SSN)</label>
+          <input formControlName="ssn" class="form-input" placeholder="###-##-####">
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="registrationForm.invalid || !registrationToken" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md disabled:bg-gray-500">
+        Complete Registration
+      </button>
+    </form>
+
+    <div *ngIf="errorMessage()" class="mt-4 text-center bg-red-800 border border-red-600 text-red-200 px-4 py-3 rounded-md">
+      {{ errorMessage() }}
+    </div>
+  </div>
+</div>

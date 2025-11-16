@@ -1,0 +1,84 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-6 text-white">My profile</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="space-y-4">
+      <h3 class="text-lg font-semibold text-gray-300 border-b border-gray-600 pb-2">Personal Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+        <div>
+          <label class="block text-gray-300 text-sm font-bold mb-2">Full Name</label>
+          <input formControlName="fullName" class="form-input">
+          <div *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" class="text-red-400 text-xs mt-1">
+            Full name is required.
+          </div>
+        </div>
+        <div>
+          <label class="block text-gray-300 text-sm font-bold mb-2">Email</label>
+          <input formControlName="email" class="form-input bg-gray-600 cursor-not-allowed">
+        </div>
+      </div>
+
+      <h3 class="text-lg font-semibold text-gray-300 border-b border-gray-600 pb-2 pt-6">Safety</h3>
+      <div class="pt-4">
+        <label class="block text-gray-300 text-sm font-bold mb-2">New Password</label>
+        <input formControlName="newPassword" type="password" class="form-input" placeholder="Dejar en blanco para no cambiar">
+        <div *ngIf="profileForm.get('newPassword')?.hasError('minlength')" class="text-red-400 text-xs mt-1">
+            The password must be at least 8 characters long.
+        </div>
+      </div>
+
+      <h3 class="text-lg font-semibold text-gray-300 border-b border-gray-600 pb-2 pt-6">Tax Information (W-9)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+        <div>
+          <label class="block text-gray-300 text-sm font-bold mb-2">Address</label>
+          <input formControlName="streetAddress" class="form-input">
+          <div *ngIf="profileForm.get('streetAddress')?.invalid && profileForm.get('streetAddress')?.touched" class="text-red-400 text-xs mt-1">
+            Address is required.
+          </div>
+        </div>
+        <div>
+          <label class="block text-gray-300 text-sm font-bold mb-2">City, State, Zip Code</label>
+          <input formControlName="cityStateZip" class="form-input" placeholder="Ej: Miami, FL 33101">
+          <div *ngIf="profileForm.get('cityStateZip')?.invalid && profileForm.get('cityStateZip')?.touched" class="text-red-400 text-xs mt-1">
+            <span *ngIf="profileForm.get('cityStateZip')?.hasError('required')">This field is required.</span>
+            <span *ngIf="profileForm.get('cityStateZip')?.hasError('pattern')">Invalid format. Example: Miami, FL 33101</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-gray-300 text-sm font-bold mb-2">Social Security (SSN)</label>
+          <input formControlName="ssn" class="form-input" placeholder="###-##-####">
+          <div *ngIf="profileForm.get('ssn')?.invalid && profileForm.get('ssn')?.touched" class="text-red-400 text-xs mt-1">
+            <span *ngIf="profileForm.get('ssn')?.hasError('required')">This field is required.</span>
+            <span *ngIf="profileForm.get('ssn')?.hasError('pattern')">Invalid format. Must be ###-##-####.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <button type="submit" [disabled]="profileForm.invalid" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md disabled:bg-gray-500 disabled:cursor-not-allowed">
+      Save Changes
+    </button>
+  </form>
+
+
+  <div *ngIf="successMessage()" class="mt-4 text-center bg-green-800 text-green-200 p-3 rounded-md">
+    {{ successMessage() }}
+  </div>
+  <div *ngIf="errorMessage()" class="mt-4 text-center bg-red-800 text-red-200 p-3 rounded-md">
+    {{ errorMessage() }}
+  </div>
+
+  <div *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
+    <div class="border-t border-gray-700 pt-8">
+      <h2 class="text-2xl font-bold mb-4 text-white">Subscription Management</h2>
+      <div class="bg-gray-700/50 p-6 rounded-lg flex flex-col md:flex-row justify-between md:items-center gap-4">
+        <div>
+          <p class="text-gray-300">Here you can manage billing and cancel your plan.</p>
+          <p class="text-xs text-gray-400 mt-1">Your plan will remain active until the end of the billing cycle.</p>
+        </div>
+        <button (click)="onCancelSubscription()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors flex-shrink-0">
+          Cancel Subscription
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

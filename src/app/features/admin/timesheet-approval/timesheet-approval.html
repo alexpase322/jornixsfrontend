@@ -1,0 +1,32 @@
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+  <h2 class="text-2xl font-bold mb-4 text-white">Timesheets Pending Approval</h2>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-white">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="th-style">Worker</th>
+          <th class="th-style">Week</th>
+          <th class="th-style">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ts of timesheets()" class="border-b border-gray-600 hover:bg-gray-700">
+          <td class="td-style">{{ ts.workerName }}</td>
+          <td class="td-style">{{ ts.weekStartDate | date:'d MMM' }} - {{ ts.weekEndDate | date:'d MMM, y' }}</td>
+          <td class="td-style space-x-2">
+            <button (click)="approve(ts.timesheetId)" class="bg-green-600 hover:bg-green-700 font-bold py-1 px-3 rounded">Approve</button>
+            <button (click)="reject(ts.timesheetId)" class="bg-red-600 hover:bg-red-700 font-bold py-1 px-3 rounded">Reject</button>
+            <a [routerLink]="['/admin/reports/detailed', ts.workerId]" 
+                [queryParams]="{ startDate: ts.weekStartDate, endDate: ts.weekEndDate }"
+                class="bg-blue-600 hover:bg-blue-700 font-bold py-1 px-3 rounded">
+                See Details
+            </a>
+          </td>
+        </tr>
+        <tr *ngIf="timesheets().length === 0">
+            <td colspan="3" class="text-center py-8 text-gray-500">There are no outstanding timesheets.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="min-h-screen bg-gray-900 text-white">
+  <nav class="bg-gray-800 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center space-x-8">
+          
+          <span class="font-bold text-xl text-white">Jornixs</span>
+          <div class="hidden md:flex items-center space-x-4">
+            <ng-container *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
+              <a routerLink="/admin/dashboard" routerLinkActive="active-link" class="nav-link">Dashboard</a>
+              <a routerLink="/admin/workers" routerLinkActive="active-link" class="nav-link">Workers</a>
+              <a routerLink="/admin/locations" routerLinkActive="active-link" class="nav-link">Workspaces</a> 
+              <a routerLink="/admin/reports/payroll" routerLinkActive="active-link" class="nav-link">Reports</a>
+              <a routerLink="/admin/approvals" routerLinkActive="active-link" class="nav-link">Approvals</a>
+              <a routerLink="/timesheet-history" routerLinkActive="active-link" class="nav-link">Timesheets</a>
+            </ng-container>
+
+            <ng-container *ngIf="userRole() === 'ROLE_TRABAJADOR'">
+              <a routerLink="/worker/dashboard" routerLinkActive="active-link" class="nav-link">My Panel</a>
+              <a routerLink="/timesheet-history" routerLinkActive="active-link" class="nav-link">Timesheets</a>
+            </ng-container>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a routerLink="/profile" routerLinkActive="active-link" class="nav-link">My Profile</a>
+          <button (click)="logout()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md">
+            Log out
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,3 @@
+.action-button {
+  @apply text-white font-bold py-3 px-4 rounded-md focus:outline-none focus:shadow-outline disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors duration-200;
+}
