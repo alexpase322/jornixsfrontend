@@ -71,5 +71,5 @@ export const routes: Routes = [
   // Redirigir la ruta raíz a login por defecto
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
   // Redirigir cualquier otra ruta no encontrada
-  { path: '', redirectTo: 'login' }
+  { path: '', redirectTo: 'home' }
 ];
