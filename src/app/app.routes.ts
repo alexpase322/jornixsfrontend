@@ -26,7 +26,7 @@ export const routes: Routes = [
   { path: 'register-company', component: RegisterCompanyComponent }, // <-- Asegúrate de que esta línea exista
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'home', component: LandingComponent },
+  { path: '', component: LandingComponent },
   // Rutas de Trabajador
   { 
     path: 'worker', 
@@ -69,7 +69,7 @@ export const routes: Routes = [
   },
 
   // Redirigir la ruta raíz a login por defecto
-  { path: '**', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login', pathMatch: 'full' },
   // Redirigir cualquier otra ruta no encontrada
-  { path: '', redirectTo: 'home' }
+  { path: '', redirectTo: 'login' }
 ];
