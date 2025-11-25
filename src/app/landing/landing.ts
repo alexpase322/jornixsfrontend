@@ -25,24 +25,24 @@ export class LandingComponent {
   
   plans = [
     {
-      name: 'Emprendedor',
+      name: 'Entrepreneur',
       price: 19,
       workers: '1 a 10',
-      features: ['Seguimiento de horas', 'Reportes consolidados', 'Soporte por email'],
+      features: ['Time tracking', 'Consolidated reports', 'Email support'],
       stripePriceId: 'price_1SIeqOLfOYfy0olvCdtPv8oZ' // 
     },
     {
-      name: 'Crecimiento',
+      name: 'Growth',
       price: 49,
       workers: '11 a 50',
-      features: ['Todo en Emprendedor', 'Aprobación de horas', 'Gestión de ubicaciones'],
+      features: ['Everything in Entrepreneur', 'Approval of hours', 'Location management'],
       stripePriceId: 'price_1SIesCLfOYfy0olvCw9ZgZur'
     },
     {
-      name: 'Corporativo',
+      name: 'Corporate',
       price: 99,
       workers: '51+',
-      features: ['Todo en Crecimiento', 'Reportes detallados', 'Exportación PDF/Excel'],
+      features: ['Everything in Growth', 'Detailed reports', 'PDF/Excel export'],
       stripePriceId: 'price_1SIesyLfOYfy0olvhi1gFeFz'
     }
   ];
