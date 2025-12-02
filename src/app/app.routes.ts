@@ -19,6 +19,7 @@ import { TimesheetApprovalComponent } from './features/admin/timesheet-approval/
 import { DetailedReportComponent } from './features/admin/detailed-report/detailed-report';
 import { TimesheetHistoryComponent } from './features/timesheet-history/timesheet-history';
 import { LandingComponent } from './landing/landing';
+import { PaymentSuccess } from './features/payment/payment-success/payment-success';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -26,6 +27,10 @@ export const routes: Routes = [
   { path: 'register-company', component: RegisterCompanyComponent }, // <-- Asegúrate de que esta línea exista
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  {
+    path: 'payment/success',
+    component: PaymentSuccess
+  },
   { path: '', component: LandingComponent },
   // Rutas de Trabajador
   { 
@@ -69,7 +74,5 @@ export const routes: Routes = [
   },
 
   // Redirigir la ruta raíz a login por defecto
-  { path: '**', redirectTo: 'login', pathMatch: 'full' },
-  // Redirigir cualquier otra ruta no encontrada
-  { path: '', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login', pathMatch: 'full' }
 ];
