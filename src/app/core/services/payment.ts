@@ -19,4 +19,8 @@ export class PaymentService {
     // El backend devuelve un string de confirmación
     return this.http.post(`${environment.apiUrl}/payments/cancel-subscription`, {}, { responseType: 'text' });
   }
+
+  createPortalSession(): Observable<{ url: string }> {
+    return this.http.post<{ url: string }>(`${environment.apiUrl}/create-portal-session`, {});
+  }
 }

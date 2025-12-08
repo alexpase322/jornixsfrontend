@@ -21,6 +21,7 @@ export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
+  isLoadingPortal = false; // Variable para el estado de carga del botón
 
   constructor(private fb: FormBuilder, private profileService: ProfileService) {
     this.profileForm = this.fb.group({
@@ -86,4 +87,20 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
+
+  manageSubscription() {
+    this.isLoadingPortal = true;
+    this.paymentService.createPortalSession().subscribe({
+      next: (res) => {
+        // Redirigimos al usuario al portal de Stripe
+        window.location.href = res.url;
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al acceder al portal de facturación.');
+        this.isLoadingPortal = false;
+      }
+    });
+  }
+  
 }

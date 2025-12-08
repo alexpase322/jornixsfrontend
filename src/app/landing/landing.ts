@@ -22,28 +22,48 @@ export class LandingComponent {
   termsAccepted = new FormControl(false, Validators.requiredTrue);
   isTermsModalOpen = signal(false);
   openFaq: number | null = null;
-  
+  isAnnual: boolean = false;
+  isLoading = false;
+
   plans = [
     {
       name: 'Entrepreneur',
-      price: 19,
       workers: '1 a 10',
       features: ['Time tracking', 'Consolidated reports', 'Email support'],
-      stripePriceId: 'price_1SIeqOLfOYfy0olvCdtPv8oZ' // 
+      price: {
+        monthly: 19,
+        yearly: 160 
+      },
+      stripePriceId: {
+        monthly: 'price_1SIeqOLfOYfy0olvCdtPv8oZ',
+        yearly: 'price_1SagiALfOYfy0olvfnnDY34o' // <--- FALTANTE DE STRIPE
+      }
     },
     {
       name: 'Growth',
-      price: 49,
       workers: '11 a 50',
       features: ['Everything in Entrepreneur', 'Approval of hours', 'Location management'],
-      stripePriceId: 'price_1SIesCLfOYfy0olvCw9ZgZur'
+      price: {
+        monthly: 49,
+        yearly: 380
+      },
+      stripePriceId: {
+        monthly: 'price_1SIesCLfOYfy0olvCw9ZgZur',
+        yearly: 'price_1SagsQLfOYfy0olvhHkTYtn4' // <--- FALTANTE DE STRIPE
+      }
     },
     {
       name: 'Corporate',
-      price: 99,
       workers: '51+',
       features: ['Everything in Growth', 'Detailed reports', 'PDF/Excel export'],
-      stripePriceId: 'price_1SIesyLfOYfy0olvhi1gFeFz'
+      price: {
+        monthly: 99,
+        yearly: 710
+      },
+      stripePriceId: {
+        monthly: 'price_1SIesyLfOYfy0olvhi1gFeFz',
+        yearly: 'price_1SaguNLfOYfy0olvwJPuazCO' // <--- FALTANTE DE STRIPE
+      }
     }
   ];
 
@@ -73,5 +93,29 @@ export class LandingComponent {
 
   toggleFaq(index: number): void {
     this.openFaq = this.openFaq === index ? null : index;
+  }
+
+  toggleBilling() {
+    this.isAnnual = !this.isAnnual;
+  }
+
+  // Método de compra
+  buyPlan(priceId: string) {
+    if (!priceId || priceId.includes('PON_AQUI')) {
+      alert('El plan anual aún no está configurado.');
+      return;
+    }
+
+    this.isLoading = true;
+    this.paymentService.createCheckoutSession(priceId).subscribe({
+      next: (res) => {
+        window.location.href = res.url;
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al iniciar el pago.');
+        this.isLoading = false;
+      }
+    });
   }
 }
