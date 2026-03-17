@@ -17,6 +17,20 @@ export class DashboardComponent implements OnInit {
   public currentStatus = signal<WorkerStatus>('Fuera de Oficina');
   public errorMessage = signal<string | null>(null);
   public successMessage = signal<string | null>(null);
+  private readonly deviceTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  private readonly dateFormatter = new Intl.DateTimeFormat(undefined, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: this.deviceTimeZone,
+  });
+  private readonly timeFormatter = new Intl.DateTimeFormat(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: this.deviceTimeZone,
+  });
 
   constructor(private timeLogService: TimeLogService, private timesheetService: TimesheetService) {}
 
@@ -102,6 +116,19 @@ export class DashboardComponent implements OnInit {
   private handleError(message: string): void {
     this.errorMessage.set(message);
     setTimeout(() => this.errorMessage.set(null), 5000); // El error desaparece a los 5 segundos
+  }
+
+  private normalizeTimestamp(timestamp: string): Date {
+    const hasTimeZone = /(Z|[+-]\d{2}:\d{2})$/i.test(timestamp);
+    return new Date(hasTimeZone ? timestamp : `${timestamp}Z`);
+  }
+
+  formatLogDate(timestamp: string): string {
+    return this.dateFormatter.format(this.normalizeTimestamp(timestamp));
+  }
+
+  formatLogTime(timestamp: string): string {
+    return this.timeFormatter.format(this.normalizeTimestamp(timestamp));
   }
 
   submitWeek(): void {

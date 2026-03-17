@@ -58,9 +58,9 @@
         </thead>
         <tbody>
           <tr *ngFor="let log of weeklyLogs()" class="border-b border-gray-600 hover:bg-gray-700">
-            <td class="py-3 px-4">{{ log.timestamp | date:'EEEE, d MMMM' }}</td>
+            <td class="py-3 px-4">{{ formatLogDate(log.timestamp) }}</td>
             <td class="py-3 px-4">{{ log.eventType.replace('_', ' ') }}</td>
-            <td class="py-3 px-4 font-mono">{{ log.timestamp | date:'HH:mm:ss' }}</td>
+            <td class="py-3 px-4 font-mono">{{ formatLogTime(log.timestamp) }}</td>
           </tr>
           <tr *ngIf="weeklyLogs().length === 0">
             <td colspan="3" class="text-center py-8 text-gray-500">There are no records this week.</td>
