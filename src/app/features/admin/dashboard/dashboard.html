@@ -1,7 +1,11 @@
 <div class="space-y-6 p-6">
   <h1 class="text-3xl font-bold text-white">Managed Dashboard</h1>
 
-  <div *ngIf="stats() as statistics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+  <div *ngIf="dashboardError()" class="bg-red-800 text-red-100 px-4 py-3 rounded-md">
+    {{ dashboardError() }}
+  </div>
+
+  <div *ngIf="!isLoadingStats() && stats() as statistics; else loadingStats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
     
     <div 
       (click)="goToApprovals()" 
@@ -63,7 +67,7 @@
             <div>
               <p class="font-semibold">{{ ts.workerName }}</p>
               <p class="text-sm text-gray-400">
-                Week: {{ ts.weekStartDate | date:'d MMM' }} - {{ ts.weekEndDate | date:'d MMM' }}
+                Week: {{ formatWeekDate(ts.weekStartDate) }} - {{ formatWeekDate(ts.weekEndDate) }}
               </p>
             </div>
             <a [routerLink]="['/admin/approvals']" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1 px-2 rounded">

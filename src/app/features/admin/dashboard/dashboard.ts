@@ -26,6 +26,8 @@ export class AdminDashboardComponent implements OnInit {
 
   // Señales para los datos
   public stats = signal<DashboardStats | null>(null);
+  public isLoadingStats = signal(true);
+  public dashboardError = signal<string | null>(null);
 
   // --- SEÑALES NUEVAS PARA ACCIONES PENDIENTES ---
   public pendingTimesheets = signal<TimesheetSummary[]>([]);
@@ -60,30 +62,80 @@ export class AdminDashboardComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.adminService.getDashboardStats().subscribe(data => this.stats.set(data));
+    this.loadStats();
     this.loadChartData();
     this.loadPendingTimesheets();
   }
 
-  loadChartData(): void {
-    const { startDate, endDate } = this.getCurrentWeekRange();
-    this.adminService.generateConsolidatedReport(startDate, endDate).subscribe(report => {
-      const labels: string[] = [];
-      const data: number[] = [];
-      report.entries.filter(e => e.totalHours > 0).forEach(entry => {
-        labels.push(entry.workerName);
-        data.push(entry.totalHours);
-      });
-      this.barChartData.set({
-        labels: labels,
-        datasets: [{ ...this.barChartData().datasets[0], data: data }]
-      });
+  private loadStats(): void {
+    this.isLoadingStats.set(true);
+    this.dashboardError.set(null);
+
+    this.adminService.getDashboardStats().subscribe({
+      next: data => {
+        this.stats.set(data);
+        this.isLoadingStats.set(false);
+      },
+      error: () => {
+        this.dashboardError.set('No se pudo cargar la información del dashboard.');
+        this.isLoadingStats.set(false);
+      }
     });
   }
 
+  loadChartData(): void {
+    const { startDate, endDate } = this.getCurrentWeekRange();
+    this.adminService.generateConsolidatedReport(startDate, endDate).subscribe({
+      next: report => {
+        const labels: string[] = [];
+        const data: number[] = [];
+        report.entries.filter(e => e.totalHours > 0).forEach(entry => {
+          labels.push(entry.workerName);
+          data.push(entry.totalHours);
+        });
+        this.barChartData.set({
+          labels: labels,
+          datasets: [{ ...this.barChartData().datasets[0], data: data }]
+        });
+      },
+      error: () => {
+        this.barChartData.set({
+          labels: [],
+          datasets: [{ ...this.barChartData().datasets[0], data: [] }]
+        });
+      }
+    });
+  }
+
+  private formatDateToLocalISO(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  formatWeekDate(value: string): string {
+    if (!value) {
+      return '--';
+    }
+
+    const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
+    const parsed = new Date(isDateOnly ? `${value}T12:00:00` : value);
+    if (Number.isNaN(parsed.getTime())) {
+      return '--';
+    }
+
+    return parsed.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+  }
+
   loadPendingTimesheets(): void {
-    this.timesheetService.getSubmittedTimesheets().subscribe(data => {
-      this.pendingTimesheets.set(data);
+    this.timesheetService.getSubmittedTimesheets().subscribe({
+      next: data => {
+        this.pendingTimesheets.set(data);
+      },
+      error: () => {
+        this.pendingTimesheets.set([]);
+      }
     });
   }
 
@@ -95,12 +147,17 @@ export class AdminDashboardComponent implements OnInit {
     const today = new Date();
     const dayOfWeek = today.getDay();
     const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    const startOfWeek = new Date(today.setDate(today.getDate() + diffToMonday));
+
+    const startOfWeek = new Date(today);
+    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
+
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
+
     return {
-      startDate: startOfWeek.toISOString().split('T')[0],
-      endDate: endOfWeek.toISOString().split('T')[0]
+      startDate: this.formatDateToLocalISO(startOfWeek),
+      endDate: this.formatDateToLocalISO(endOfWeek)
     };
   }
 }
