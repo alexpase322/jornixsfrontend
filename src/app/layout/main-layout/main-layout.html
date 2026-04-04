@@ -3,7 +3,6 @@
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16">
         <div class="flex items-center space-x-8">
-          
           <span class="font-bold text-xl text-white">Jornixs</span>
           <div class="hidden md:flex items-center space-x-4">
             <ng-container *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
@@ -21,9 +20,45 @@
             </ng-container>
           </div>
         </div>
-        <div class="flex items-center space-x-4">
+
+        <div class="hidden md:flex items-center space-x-4">
           <a routerLink="/profile" routerLinkActive="active-link" class="nav-link">My Profile</a>
           <button (click)="logout()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md">
+            Log out
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700"
+          (click)="toggleMobileMenu()"
+          [attr.aria-expanded]="mobileMenuOpen()"
+          aria-label="Toggle menu">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path *ngIf="!mobileMenuOpen()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            <path *ngIf="mobileMenuOpen()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div *ngIf="mobileMenuOpen()" class="md:hidden pb-4 space-y-2">
+        <ng-container *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
+          <a (click)="closeMobileMenu()" routerLink="/admin/dashboard" routerLinkActive="active-link" class="block nav-link">Dashboard</a>
+          <a (click)="closeMobileMenu()" routerLink="/admin/workers" routerLinkActive="active-link" class="block nav-link">Workers</a>
+          <a (click)="closeMobileMenu()" routerLink="/admin/locations" routerLinkActive="active-link" class="block nav-link">Workspaces</a>
+          <a (click)="closeMobileMenu()" routerLink="/admin/reports/payroll" routerLinkActive="active-link" class="block nav-link">Reports</a>
+          <a (click)="closeMobileMenu()" routerLink="/admin/approvals" routerLinkActive="active-link" class="block nav-link">Approvals</a>
+          <a (click)="closeMobileMenu()" routerLink="/timesheet-history" routerLinkActive="active-link" class="block nav-link">Timesheets</a>
+        </ng-container>
+
+        <ng-container *ngIf="userRole() === 'ROLE_TRABAJADOR'">
+          <a (click)="closeMobileMenu()" routerLink="/worker/dashboard" routerLinkActive="active-link" class="block nav-link">My Panel</a>
+          <a (click)="closeMobileMenu()" routerLink="/timesheet-history" routerLinkActive="active-link" class="block nav-link">Timesheets</a>
+        </ng-container>
+
+        <div class="border-t border-gray-700 pt-2 space-y-2">
+          <a (click)="closeMobileMenu()" routerLink="/profile" routerLinkActive="active-link" class="block nav-link">My Profile</a>
+          <button (click)="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md">
             Log out
           </button>
         </div>
