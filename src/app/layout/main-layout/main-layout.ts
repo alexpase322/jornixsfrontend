@@ -25,6 +25,7 @@ export class MainLayoutComponent implements OnInit {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   isTermsModalOpen = signal(false); // Nueva señal para el modal
+  public mobileMenuOpen = signal(false);
   public userRole = this.authService.userRole;
   public breadcrumbs = signal<BreadcrumbItem[]>([]);
 
@@ -35,10 +36,20 @@ export class MainLayoutComponent implements OnInit {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.breadcrumbs.set(this.createBreadcrumbs(this.activatedRoute.root));
+      this.mobileMenuOpen.set(false);
     });
   }
 
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(value => !value);
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
+
   logout(): void {
+    this.closeMobileMenu();
     this.authService.logout();
   }
 
