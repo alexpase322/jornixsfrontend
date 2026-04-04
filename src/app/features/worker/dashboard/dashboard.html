@@ -59,7 +59,7 @@
         <tbody>
           <tr *ngFor="let log of weeklyLogs()" class="border-b border-gray-600 hover:bg-gray-700">
             <td class="py-3 px-4">{{ formatLogDate(log.timestamp) }}</td>
-            <td class="py-3 px-4">{{ log.eventType.replace('_', ' ') }}</td>
+            <td class="py-3 px-4">{{ formatEventType(log.eventType) }}</td>
             <td class="py-3 px-4 font-mono">{{ formatLogTime(log.timestamp) }}</td>
           </tr>
           <tr *ngIf="weeklyLogs().length === 0">
