@@ -11,8 +11,7 @@ import { TimeLogService } from '../../../core/services/time-log';
 import { DetailedPayrollReport, DailySummary } from '../../../core/models/admin.models';
 import { TimeLog } from '../../../core/models/timelog.models';
 
-// Shared Components & Pipes
-import { FormatTimePipe } from '../../../shared/pipes/format-time-pipe';
+// Shared Components
 import { TimeCorrectionModalComponent } from '../../../shared/time-correction-modal/time-correction-modal';
 
 @Component({
@@ -21,7 +20,6 @@ import { TimeCorrectionModalComponent } from '../../../shared/time-correction-mo
   imports: [
     CommonModule,
     RouterModule,
-    FormatTimePipe,
     TimeCorrectionModalComponent
   ],
   templateUrl: './detailed-report.html',
@@ -40,6 +38,29 @@ export class DetailedReportComponent implements OnInit {
   public isModalOpen = signal(false);
   public selectedLog = signal<TimeLog | null>(null);
   public dateForNewLog = signal<string | null>(null);
+  private readonly deviceTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  private readonly longDateFormatter = new Intl.DateTimeFormat(undefined, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: this.deviceTimeZone
+  });
+  private readonly weekDateFormatter = new Intl.DateTimeFormat(undefined, {
+    day: 'numeric',
+    month: 'short',
+    timeZone: this.deviceTimeZone
+  });
+  private readonly dailyDateFormatter = new Intl.DateTimeFormat(undefined, {
+    weekday: 'long',
+    day: 'numeric',
+    timeZone: this.deviceTimeZone
+  });
+  private readonly timeFormatter = new Intl.DateTimeFormat(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: this.deviceTimeZone
+  });
 
   constructor() {}
 
@@ -67,6 +88,55 @@ export class DetailedReportComponent implements OnInit {
     this.timeLogService.getMyDetailedReport(startDate, endDate).subscribe(data => {
       this.report.set(data);
     });
+  }
+
+  private normalizeTimestamp(value: string): Date {
+    const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
+    if (isDateOnly) {
+      // Evita desfases de día al convertir fechas sin hora.
+      return new Date(`${value}T12:00:00`);
+    }
+
+    const hasTimeZone = /(Z|[+-]\d{2}:\d{2})$/i.test(value);
+    if (!hasTimeZone && value.includes('T')) {
+      return new Date(`${value}Z`);
+    }
+
+    return new Date(value);
+  }
+
+  private normalizeTimeValue(value: string | null): Date | null {
+    if (!value || typeof value !== 'string') {
+      return null;
+    }
+
+    const isOnlyTime = /^\d{2}:\d{2}(:\d{2})?$/.test(value);
+    if (isOnlyTime) {
+      return new Date(`1970-01-01T${value}Z`);
+    }
+
+    return this.normalizeTimestamp(value);
+  }
+
+  formatLongDate(value: string): string {
+    return this.longDateFormatter.format(this.normalizeTimestamp(value));
+  }
+
+  formatWeekDate(value: string): string {
+    return this.weekDateFormatter.format(this.normalizeTimestamp(value));
+  }
+
+  formatDailyDate(value: string): string {
+    return this.dailyDateFormatter.format(this.normalizeTimestamp(value));
+  }
+
+  formatEventTime(value: string | null): string {
+    const parsed = this.normalizeTimeValue(value);
+    if (!parsed || Number.isNaN(parsed.getTime())) {
+      return '--:--';
+    }
+
+    return this.timeFormatter.format(parsed);
   }
 
   goBack(): void {

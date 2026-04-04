@@ -3,7 +3,7 @@
   <div class="flex justify-between items-center">
     <div>
       <h2 class="text-2xl font-bold">Detailed Report: {{ r.workerName }}</h2>
-      <p class="text-gray-400">Showing report from {{ r.startDate | date:'d MMM, y' }} up to {{ r.endDate | date:'d MMM, y' }}</p>
+      <p class="text-gray-400">Showing report from {{ formatLongDate(r.startDate) }} up to {{ formatLongDate(r.endDate) }}</p>
     </div>
     <button (click)="goBack()" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded">
       &larr; Return
@@ -12,7 +12,7 @@
 
   <div *ngFor="let weeklySummary of r.weeklySummaries" class="bg-gray-700/50 p-4 rounded-lg">
     <h4 class="text-lg font-bold mb-2 text-blue-300">
-      Week: {{ weeklySummary.workWeek.startDate | date:'d MMM' }} - {{ weeklySummary.workWeek.endDate | date:'d MMM, y' }}
+      Week: {{ formatWeekDate(weeklySummary.workWeek.startDate) }} - {{ formatLongDate(weeklySummary.workWeek.endDate) }}
     </h4>
 
     <div class="overflow-x-auto">
@@ -33,26 +33,26 @@
             <tbody>
               <ng-container *ngIf="r.dailySummariesByWeek && r.dailySummariesByWeek[weeklySummary.workWeek.id] as dailySummaries; else noLogs">
                 <tr *ngFor="let daily of dailySummaries" class="border-b border-gray-500/50">
-                  <td class="td-style">{{ daily.date | date:'EEEE, d' }}</td>
+                  <td class="td-style">{{ formatDailyDate(daily.date) }}</td>
                   <td class="td-style">{{ daily.workLocationName }}</td>
                   <td class="td-style font-mono">
                     <button (click)="openCorrectionModal(daily, 'INGRESO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
-                      {{ daily.clockInTime | formatTime }}
+                      {{ formatEventTime(daily.clockInTime) }}
                     </button>
                   </td>
                   <td class="td-style font-mono">
                     <button (click)="openCorrectionModal(daily, 'INICIO_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
-                      {{ daily.startLunchTime | formatTime }}
+                      {{ formatEventTime(daily.startLunchTime) }}
                     </button>
                   </td>
                   <td class="td-style font-mono">
                     <button (click)="openCorrectionModal(daily, 'FINAL_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
-                      {{ daily.endLunchTime | formatTime }}
+                      {{ formatEventTime(daily.endLunchTime) }}
                     </button>
                   </td>
                   <td class="td-style font-mono">
                     <button (click)="openCorrectionModal(daily, 'SALIDA', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
-                      {{ daily.clockOutTime | formatTime }}
+                      {{ formatEventTime(daily.clockOutTime) }}
                     </button>
                   </td>
                   <td class="td-style text-right font-mono">{{ daily.totalHours.toFixed(2) }}</td>
