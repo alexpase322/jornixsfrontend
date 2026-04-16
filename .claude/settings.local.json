@@ -7,7 +7,12 @@
       "Bash(ls mvnw*)",
       "Bash(ls *.bat)",
       "Bash(cmd.exe /c \"mvnw.cmd compile -q\")",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm view:*)",
+      "Bash(cmd.exe /c \"mvnw.cmd compile\")",
+      "Bash(cmd.exe /c \"mvnw.cmd clean compile\")",
+      "Bash(cmd.exe /c \"mvnw.cmd clean compile 2>&1\")"
     ]
   }
 }
