@@ -11,7 +11,7 @@ export interface CompanyRegistrationRequest {
   token: string;
   companyName:          string;
   companyAddress:       string;
-  companyPhoneNumber?:  string; // El '?' indica que es opcional
+  companyPhoneNumber?:  string;
   ein:                  string;
   adminFullName:        string;
   adminEmail:           string;
@@ -19,6 +19,7 @@ export interface CompanyRegistrationRequest {
   workLatitude?:        number;
   workLongitude?:       number;
   geofenceRadiusMeters?: number;
+  logoUrl?:             string;
 }
 
 export interface PayrollEntry {

@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './auth/login/login'; 
-import { MainLayoutComponent } from './layout/main-layout/main-layout'; 
+import { LoginComponent } from './auth/login/login';
+import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { DashboardComponent } from './features/worker/dashboard/dashboard';
-import { authGuard } from './core/guards/auth-guard'; 
-import { AdminDashboardComponent } from './features/admin/dashboard/dashboard'; 
+import { authGuard, roleGuard } from './core/guards/auth-guard';
+import { AdminDashboardComponent } from './features/admin/dashboard/dashboard';
 import { WorkerListComponent } from './features/admin/worker-list/worker-list';
 import { WorkerEditComponent } from './features/admin/worker-edit/worker-edit';
 import { PayrollReportComponent } from './features/admin/payroll-report/payroll-report';
@@ -13,7 +13,7 @@ import { RegisterCompanyComponent } from './auth/register-company/register-compa
 import { LocationListComponent } from './features/admin/location-list/location-list';
 import { LocationForm } from './features/admin/location-form/location-form';
 import { ProfileComponent } from './features/profile/profile';
-import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password'; 
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
 import { TimesheetApprovalComponent } from './features/admin/timesheet-approval/timesheet-approval';
 import { DetailedReportComponent } from './features/admin/detailed-report/detailed-report';
@@ -23,8 +23,8 @@ import { PaymentSuccess } from './features/payment/payment-success/payment-succe
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'complete-registration', component: CompleteRegistrationComponent }, // <-- AÑADIR
-  { path: 'register-company', component: RegisterCompanyComponent }, // <-- Asegúrate de que esta línea exista
+  { path: 'complete-registration', component: CompleteRegistrationComponent },
+  { path: 'register-company', component: RegisterCompanyComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   {
@@ -33,36 +33,35 @@ export const routes: Routes = [
   },
   { path: '', component: LandingComponent },
   // Rutas de Trabajador
-  { 
-    path: 'worker', 
+  {
+    path: 'worker',
     component: MainLayoutComponent,
-    canActivate: [authGuard], 
+    canActivate: [authGuard, roleGuard('ROLE_TRABAJADOR')],
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'reports/detailed', component: DetailedReportComponent, data: { breadcrumb: 'Mi Reporte Detallado' } }
     ]
   },
-  { 
-    path: '', 
+  {
+    path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
       { path: 'profile', component: ProfileComponent, data: { breadcrumb: 'Mi Perfil' } },
       { path: 'timesheet-history', component: TimesheetHistoryComponent, data: { breadcrumb: 'Mis Hojas de Horas' } }
-      // ... (resto de rutas como dashboards, etc.)
     ]
   },
   // Rutas de Administrador
-  { 
-    path: 'admin', 
+  {
+    path: 'admin',
     component: MainLayoutComponent,
-    canActivate: [authGuard], 
+    canActivate: [authGuard, roleGuard('ROLE_ADMINISTRADOR')],
     children: [
       { path: 'dashboard', component: AdminDashboardComponent, data: { breadcrumb: 'Dashboard' } },
       { path: 'workers', component: WorkerListComponent, data: { breadcrumb: 'Trabajadores' } },
-      { path: 'workers/:id/edit', component: WorkerEditComponent, data: { breadcrumb: 'Editar Trabajador' } }, // <-- Etiqueta estática por ahora
-      { path: 'reports/payroll', component: PayrollReportComponent, data: { breadcrumb: 'Reporte de Nómina' } }, 
+      { path: 'workers/:id/edit', component: WorkerEditComponent, data: { breadcrumb: 'Editar Trabajador' } },
+      { path: 'reports/payroll', component: PayrollReportComponent, data: { breadcrumb: 'Reporte de Nomina' } },
       { path: 'workers/invite', component: WorkerInviteComponent, data: { breadcrumb: 'Invitar Trabajador' } },
       { path: 'locations', component: LocationListComponent, data: { breadcrumb: 'Lugares de Trabajo' } },
       { path: 'locations/new', component: LocationForm, data: { breadcrumb: 'Nuevo Lugar' } },
@@ -73,6 +72,5 @@ export const routes: Routes = [
     ]
   },
 
-  // Redirigir la ruta raíz a login por defecto
   { path: '**', redirectTo: 'login', pathMatch: 'full' }
 ];

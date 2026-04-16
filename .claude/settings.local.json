@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx ng:*)",
+      "Read(//c/Users/alexp/IdeaProjects/ChronoTrack/**)",
+      "Bash(./mvnw compile:*)",
+      "Bash(ls mvnw*)",
+      "Bash(ls *.bat)",
+      "Bash(cmd.exe /c \"mvnw.cmd compile -q\")",
+      "Bash(npm install:*)"
+    ]
+  }
+}
