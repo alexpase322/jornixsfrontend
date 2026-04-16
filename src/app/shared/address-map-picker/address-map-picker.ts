@@ -9,9 +9,11 @@ import {
   signal,
   OnChanges,
   SimpleChanges,
-  NgZone
+  NgZone,
+  PLATFORM_ID,
+  Inject
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { GoogleMapsModule, GoogleMap } from '@angular/google-maps';
 
 export interface AddressSelection {
@@ -39,8 +41,8 @@ export interface AddressSelection {
         >
       </div>
 
-      <!-- Map -->
-      <div class="rounded-lg overflow-hidden border border-gray-600" style="height: 300px;">
+      <!-- Map (only render on browser to avoid SSR errors) -->
+      <div *ngIf="isBrowser" class="rounded-lg overflow-hidden border border-gray-600" style="height: 300px;">
         <google-map
           #googleMap
           width="100%"
@@ -58,7 +60,7 @@ export interface AddressSelection {
       </div>
 
       <!-- Coordinates display -->
-      <div *ngIf="markerPosition().lat !== 0" class="flex gap-4 text-xs text-gray-400">
+      <div *ngIf="isBrowser && markerPosition().lat !== 0" class="flex gap-4 text-xs text-gray-400">
         <span>Lat: {{ markerPosition().lat | number:'1.6-6' }}</span>
         <span>Lng: {{ markerPosition().lng | number:'1.6-6' }}</span>
       </div>
@@ -78,11 +80,13 @@ export class AddressMapPickerComponent implements AfterViewInit, OnChanges {
   @Output() addressSelected = new EventEmitter<AddressSelection>();
 
   displayAddress = signal('');
-  mapCenter = signal<google.maps.LatLngLiteral>({ lat: 37.7749, lng: -122.4194 });
+  mapCenter = signal<{ lat: number; lng: number }>({ lat: 37.7749, lng: -122.4194 });
   mapZoom = signal(12);
-  markerPosition = signal<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
+  markerPosition = signal<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
 
-  mapOptions: google.maps.MapOptions = {
+  isBrowser: boolean;
+
+  mapOptions: any = {
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: false,
@@ -96,23 +100,34 @@ export class AddressMapPickerComponent implements AfterViewInit, OnChanges {
     ]
   };
 
-  markerOptions: google.maps.marker.AdvancedMarkerElementOptions & google.maps.MarkerOptions = {
+  markerOptions: any = {
     draggable: true
   };
 
-  private autocomplete: google.maps.places.Autocomplete | null = null;
-  private geocoder: google.maps.Geocoder | null = null;
+  private autocomplete: any = null;
+  private geocoder: any = null;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(
+    private ngZone: NgZone,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngAfterViewInit(): void {
-    this.initAutocomplete();
-    this.geocoder = new google.maps.Geocoder();
+    // Skip Google Maps initialization during SSR
+    if (!this.isBrowser) return;
 
-    if (this.initialLatitude && this.initialLongitude) {
-      this.setPosition(this.initialLatitude, this.initialLongitude);
-      this.displayAddress.set(this.initialAddress);
-    }
+    // Wait for Google Maps API to be loaded
+    this.waitForGoogleMaps().then(() => {
+      this.initAutocomplete();
+      this.geocoder = new (window as any).google.maps.Geocoder();
+
+      if (this.initialLatitude && this.initialLongitude) {
+        this.setPosition(this.initialLatitude, this.initialLongitude);
+        this.displayAddress.set(this.initialAddress);
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -127,8 +142,24 @@ export class AddressMapPickerComponent implements AfterViewInit, OnChanges {
     }
   }
 
+  private async waitForGoogleMaps(): Promise<void> {
+    const maxAttempts = 50;
+    let attempts = 0;
+    while (
+      attempts < maxAttempts &&
+      (typeof (window as any).google === 'undefined' ||
+        !(window as any).google.maps ||
+        !(window as any).google.maps.places)
+    ) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+  }
+
   private initAutocomplete(): void {
-    if (!this.addressInput?.nativeElement) return;
+    if (!this.isBrowser || !this.addressInput?.nativeElement) return;
+    const google = (window as any).google;
+    if (!google?.maps?.places) return;
 
     this.autocomplete = new google.maps.places.Autocomplete(
       this.addressInput.nativeElement,
@@ -137,7 +168,7 @@ export class AddressMapPickerComponent implements AfterViewInit, OnChanges {
 
     this.autocomplete.addListener('place_changed', () => {
       this.ngZone.run(() => {
-        const place = this.autocomplete!.getPlace();
+        const place = this.autocomplete.getPlace();
         if (!place.geometry?.location) return;
 
         const lat = place.geometry.location.lat();
@@ -158,17 +189,16 @@ export class AddressMapPickerComponent implements AfterViewInit, OnChanges {
     this.displayAddress.set(value);
   }
 
-  onMarkerDragEnd(event: google.maps.MapMouseEvent): void {
-    if (!event.latLng) return;
+  onMarkerDragEnd(event: any): void {
+    if (!this.isBrowser || !event.latLng) return;
 
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
 
     this.setPosition(lat, lng);
 
-    // Reverse geocode to get address
     if (this.geocoder) {
-      this.geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      this.geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
         this.ngZone.run(() => {
           if (status === 'OK' && results && results[0]) {
             const address = results[0].formatted_address;
