@@ -35,6 +35,8 @@ export class DetailedReportComponent implements OnInit {
   // Señales para manejar el estado
   public userRole = this.authService.userRole;
   public report = signal<DetailedPayrollReport | null>(null);
+  public isLoading = signal(false);
+  public loadError = signal<string | null>(null);
   public isModalOpen = signal(false);
   public selectedLog = signal<TimeLog | null>(null);
   public dateForNewLog = signal<string | null>(null);
@@ -66,8 +68,15 @@ export class DetailedReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(queryParams => {
-      const { startDate, endDate } = queryParams;
-      if (!startDate || !endDate) return;
+      let startDate = queryParams['startDate'];
+      let endDate = queryParams['endDate'];
+
+      // Fallback: si no se pasan fechas, usar semana actual
+      if (!startDate || !endDate) {
+        const range = this.getCurrentWeekRange();
+        startDate = range.startDate;
+        endDate = range.endDate;
+      }
 
       if (this.userRole() === 'ROLE_ADMINISTRADOR') {
         const workerId = this.route.snapshot.params['workerId'];
@@ -78,15 +87,46 @@ export class DetailedReportComponent implements OnInit {
     });
   }
 
+  private getCurrentWeekRange(): { startDate: string; endDate: string } {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const start = new Date(today);
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() + diffToMonday);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return { startDate: fmt(start), endDate: fmt(end) };
+  }
+
   loadAdminReport(workerId: number, startDate: string, endDate: string): void {
-    this.adminService.generateDetailedReport(workerId, startDate, endDate).subscribe(data => {
-      this.report.set(data);
+    this.isLoading.set(true);
+    this.loadError.set(null);
+    this.adminService.generateDetailedReport(workerId, startDate, endDate).subscribe({
+      next: data => {
+        this.report.set(data);
+        this.isLoading.set(false);
+      },
+      error: err => {
+        this.loadError.set(err?.error?.message || 'Error loading the report.');
+        this.isLoading.set(false);
+      }
     });
   }
 
   loadWorkerReport(startDate: string, endDate: string): void {
-    this.timeLogService.getMyDetailedReport(startDate, endDate).subscribe(data => {
-      this.report.set(data);
+    this.isLoading.set(true);
+    this.loadError.set(null);
+    this.timeLogService.getMyDetailedReport(startDate, endDate).subscribe({
+      next: data => {
+        this.report.set(data);
+        this.isLoading.set(false);
+      },
+      error: err => {
+        this.loadError.set(err?.error?.message || 'Error loading the report.');
+        this.isLoading.set(false);
+      }
     });
   }
 

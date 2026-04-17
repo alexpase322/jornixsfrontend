@@ -1,11 +1,11 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router'; // Importar Router y RouterModule
+import { Router, RouterModule } from '@angular/router';
 import { AdminService } from '../../../core/services/admin';
-import { DashboardStats, ConsolidatedPayrollReport } from '../../../core/models/admin.models';
+import { DashboardStats, ConsolidatedPayrollReport, ConsolidatedPayrollEntry } from '../../../core/models/admin.models';
 
 // --- IMPORTACIONES CORRECTAS PARA NG2-CHARTS ---
-import { BaseChartDirective } from 'ng2-charts'; 
+import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 
 // --- Importaciones para la nueva funcionalidad ---
@@ -32,6 +32,10 @@ export class AdminDashboardComponent implements OnInit {
   // --- SEÑALES NUEVAS PARA ACCIONES PENDIENTES ---
   public pendingTimesheets = signal<TimesheetSummary[]>([]);
   public pendingCount = computed(() => this.pendingTimesheets().length);
+
+  // Breakdown de horas por trabajador esta semana
+  public weeklyEntries = signal<ConsolidatedPayrollEntry[]>([]);
+  public isLoadingEntries = signal(true);
 
   // --- Configuración para Chart.js (ng2-charts) ---
   public barChartData = signal<ChartData<'bar'>>({
@@ -84,12 +88,16 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadChartData(): void {
+    this.isLoadingEntries.set(true);
     const { startDate, endDate } = this.getCurrentWeekRange();
     this.adminService.generateConsolidatedReport(startDate, endDate).subscribe({
       next: report => {
+        const sortedEntries = [...(report.entries || [])].sort((a, b) => b.totalHours - a.totalHours);
+        this.weeklyEntries.set(sortedEntries);
+
         const labels: string[] = [];
         const data: number[] = [];
-        report.entries.filter(e => e.totalHours > 0).forEach(entry => {
+        sortedEntries.filter(e => e.totalHours > 0).forEach(entry => {
           labels.push(entry.workerName);
           data.push(entry.totalHours);
         });
@@ -97,12 +105,15 @@ export class AdminDashboardComponent implements OnInit {
           labels: labels,
           datasets: [{ ...this.barChartData().datasets[0], data: data }]
         });
+        this.isLoadingEntries.set(false);
       },
       error: () => {
+        this.weeklyEntries.set([]);
         this.barChartData.set({
           labels: [],
           datasets: [{ ...this.barChartData().datasets[0], data: [] }]
         });
+        this.isLoadingEntries.set(false);
       }
     });
   }

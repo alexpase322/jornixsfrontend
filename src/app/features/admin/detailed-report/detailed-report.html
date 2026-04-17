@@ -10,6 +10,11 @@
     </button>
   </div>
 
+  <div *ngIf="r.weeklySummaries.length === 0" class="text-center py-12 text-gray-400">
+    <p class="text-lg mb-2">No time records found for this period.</p>
+    <p class="text-sm">The worker has not clocked in during the selected dates, or no work week exists yet.</p>
+  </div>
+
   <div *ngFor="let weeklySummary of r.weeklySummaries" class="bg-gray-700/50 p-4 rounded-lg">
     <h4 class="text-lg font-bold mb-2 text-blue-300">
       Week: {{ formatWeekDate(weeklySummary.workWeek.startDate) }} - {{ formatLongDate(weeklySummary.workWeek.endDate) }}
@@ -90,7 +95,13 @@
 </div>
 
 <ng-template #loading>
-    <p class="text-center text-gray-400">Loading report...</p>
+  <div class="bg-gray-800 p-6 rounded-lg shadow-lg text-white">
+    <div *ngIf="isLoading()" class="text-center text-gray-400 py-8">Loading report...</div>
+    <div *ngIf="!isLoading() && loadError()" class="text-center text-red-400 py-8">{{ loadError() }}</div>
+    <div *ngIf="!isLoading() && !loadError() && !report()" class="text-center text-gray-400 py-8">
+      No report data available. Make sure the URL includes <code>?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD</code>.
+    </div>
+  </div>
 </ng-template>
 
 <app-time-correction-modal
