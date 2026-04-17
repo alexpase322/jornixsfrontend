@@ -150,9 +150,16 @@ export class DetailedReportComponent implements OnInit {
       return null;
     }
 
-    const isOnlyTime = /^\d{2}:\d{2}(:\d{2})?$/.test(value);
-    if (isOnlyTime) {
-      return new Date(`1970-01-01T${value}Z`);
+    // Acepta HH:MM, HH:MM:SS, y HH:MM:SS.xxxxxx (con microsegundos del backend Java LocalTime)
+    const timeMatch = value.match(/^(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?$/);
+    if (timeMatch) {
+      const [, hours, minutes, seconds] = timeMatch;
+      return new Date(
+        1970, 0, 1,
+        parseInt(hours, 10),
+        parseInt(minutes, 10),
+        seconds ? parseInt(seconds, 10) : 0
+      );
     }
 
     return this.normalizeTimestamp(value);
