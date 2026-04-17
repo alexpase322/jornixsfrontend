@@ -3,7 +3,14 @@
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16">
         <div class="flex items-center space-x-8">
-          <span class="font-bold text-xl text-white">Jornixs</span>
+          <a routerLink="/" class="flex items-center gap-2">
+            <img
+              src="../../../assets/logo.png"
+              alt="Jornixs logo"
+              class="h-10 w-auto object-contain"
+              onerror="this.style.display='none'">
+            <span class="font-bold text-xl text-white">Jornixs</span>
+          </a>
           <div class="hidden md:flex items-center space-x-4">
             <ng-container *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
               <a routerLink="/admin/dashboard" routerLinkActive="active-link" class="nav-link">Dashboard</a>
