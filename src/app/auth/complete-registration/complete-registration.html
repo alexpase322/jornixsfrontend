@@ -34,7 +34,21 @@
         </div>
         <div class="mb-4 md:col-span-2">
           <label class="block text-gray-300 text-sm font-bold mb-2">Social Security Number (SSN)</label>
-          <input formControlName="ssn" class="form-input" placeholder="###-##-####">
+          <input
+            formControlName="ssn"
+            class="form-input"
+            placeholder="123-45-6789"
+            maxlength="11"
+            inputmode="numeric"
+            (input)="formatSsn($event)">
+          <div *ngIf="registrationForm.get('ssn')?.invalid && (registrationForm.get('ssn')?.touched || registrationForm.get('ssn')?.dirty)">
+            <p *ngIf="registrationForm.get('ssn')?.hasError('required')" class="text-red-400 text-xs mt-1">
+              SSN is required.
+            </p>
+            <p *ngIf="registrationForm.get('ssn')?.hasError('pattern')" class="text-red-400 text-xs mt-1">
+              SSN must be 9 digits (format: 123-45-6789).
+            </p>
+          </div>
         </div>
       </div>
 

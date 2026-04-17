@@ -8,7 +8,7 @@
             <ng-container *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
               <a routerLink="/admin/dashboard" routerLinkActive="active-link" class="nav-link">Dashboard</a>
               <a routerLink="/admin/workers" routerLinkActive="active-link" class="nav-link">Workers</a>
-              <a routerLink="/admin/locations" routerLinkActive="active-link" class="nav-link">Workspaces</a> 
+              <a routerLink="/admin/locations" routerLinkActive="active-link" class="nav-link">Workspaces</a>
               <a routerLink="/admin/reports/payroll" routerLinkActive="active-link" class="nav-link">Reports</a>
               <a routerLink="/admin/approvals" routerLinkActive="active-link" class="nav-link">Approvals</a>
               <a routerLink="/timesheet-history" routerLinkActive="active-link" class="nav-link">Timesheets</a>
@@ -22,7 +22,8 @@
         </div>
 
         <div class="hidden md:flex items-center space-x-4">
-          <a routerLink="/profile" routerLinkActive="active-link" class="nav-link">My Profile</a>
+          <a *ngIf="userRole() === 'ROLE_ADMINISTRADOR'" routerLink="/admin/company" routerLinkActive="active-link" class="nav-link">Company</a>
+          <a *ngIf="userRole() === 'ROLE_TRABAJADOR'" routerLink="/profile" routerLinkActive="active-link" class="nav-link">My Profile</a>
           <button (click)="logout()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md">
             Log out
           </button>
@@ -57,7 +58,8 @@
         </ng-container>
 
         <div class="border-t border-gray-700 pt-2 space-y-2">
-          <a (click)="closeMobileMenu()" routerLink="/profile" routerLinkActive="active-link" class="block nav-link">My Profile</a>
+          <a *ngIf="userRole() === 'ROLE_ADMINISTRADOR'" (click)="closeMobileMenu()" routerLink="/admin/company" routerLinkActive="active-link" class="block nav-link">Company</a>
+          <a *ngIf="userRole() === 'ROLE_TRABAJADOR'" (click)="closeMobileMenu()" routerLink="/profile" routerLinkActive="active-link" class="block nav-link">My Profile</a>
           <button (click)="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md">
             Log out
           </button>

@@ -35,6 +35,10 @@
             <input id="companyName" formControlName="companyName" class="form-input">
           </div>
           <div>
+            <label for="companyAddress" class="block text-gray-300 text-sm font-bold mb-2">Company Address</label>
+            <input id="companyAddress" formControlName="companyAddress" class="form-input" placeholder="123 Main St, City, State">
+          </div>
+          <div>
             <label for="ein" class="block text-gray-300 text-sm font-bold mb-2">EIN (Employer Identification Number)</label>
             <input id="ein" formControlName="ein" class="form-input">
           </div>
@@ -57,21 +61,6 @@
            <div>
             <label for="adminPassword" class="block text-gray-300 text-sm font-bold mb-2">Password</label>
             <input id="adminPassword" type="password" formControlName="adminPassword" class="form-input" placeholder="Min. 8 characters">
-          </div>
-        </div>
-
-        <!-- Company Address with Map -->
-        <div class="md:col-span-2 mt-2">
-          <h3 class="text-xl font-bold text-white border-b border-gray-600 pb-2 mb-4">Company Location</h3>
-          <app-address-map-picker
-            label="Company Address"
-            placeholder="Search for your company address..."
-            (addressSelected)="onAddressSelected($event)"
-          />
-          <div class="mt-3">
-            <label class="block text-gray-300 text-sm font-bold mb-2">Default Geofence Radius (meters)</label>
-            <input formControlName="geofenceRadiusMeters" type="number" class="form-input" placeholder="100">
-            <p class="text-gray-500 text-xs mt-1">Workers must be within this radius to clock in/out.</p>
           </div>
         </div>
 

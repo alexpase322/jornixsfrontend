@@ -12,7 +12,9 @@
       "Bash(npm view:*)",
       "Bash(cmd.exe /c \"mvnw.cmd compile\")",
       "Bash(cmd.exe /c \"mvnw.cmd clean compile\")",
-      "Bash(cmd.exe /c \"mvnw.cmd clean compile 2>&1\")"
+      "Bash(cmd.exe /c \"mvnw.cmd clean compile 2>&1\")",
+      "Read(//tmp/**)",
+      "Bash(./mvnw.cmd clean *)"
     ]
   }
 }

@@ -5,12 +5,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { CloudinaryService } from '../../core/services/cloudinary';
 import { ModalComponent } from '../../shared/modal/modal';
-import { AddressMapPickerComponent, AddressSelection } from '../../shared/address-map-picker/address-map-picker';
 
 @Component({
   selector: 'app-register-company',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ModalComponent, AddressMapPickerComponent],
+  imports: [CommonModule, ReactiveFormsModule, ModalComponent],
   templateUrl: './register-company.html',
 })
 export class RegisterCompanyComponent implements OnInit {
@@ -37,7 +36,7 @@ export class RegisterCompanyComponent implements OnInit {
       companyPhoneNumber: [''],
       workLatitude: [null],
       workLongitude: [null],
-      geofenceRadiusMeters: [100],
+      geofenceRadiusMeters: [null],
       termsAccepted: [false, Validators.requiredTrue]
     });
   }
@@ -49,14 +48,6 @@ export class RegisterCompanyComponent implements OnInit {
         this.errorMessage.set('Enlace de registro invalido. Por favor, utiliza el enlace enviado a tu correo electronico.');
         this.registrationForm.disable();
       }
-    });
-  }
-
-  onAddressSelected(selection: AddressSelection): void {
-    this.registrationForm.patchValue({
-      companyAddress: selection.address,
-      workLatitude: selection.latitude,
-      workLongitude: selection.longitude
     });
   }
 

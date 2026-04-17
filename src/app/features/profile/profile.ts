@@ -1,12 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProfileService } from '../../core/services/profile'; 
+import { ProfileService } from '../../core/services/profile';
 import { RouterModule } from '@angular/router';
-import { PaymentService } from '../../core/services/payment';
-import { AuthService } from '../../core/services/auth';
-import { inject } from '@angular/core';
-
 
 @Component({
   selector: 'app-profile',
@@ -15,22 +11,15 @@ import { inject } from '@angular/core';
   templateUrl: './profile.html',
 })
 export class ProfileComponent implements OnInit {
-  private paymentService = inject(PaymentService); // <-- Inyectar
-  private authService = inject(AuthService); // <-- Inyectar
-  public userRole = this.authService.userRole; // <
   profileForm: FormGroup;
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
-  isLoadingPortal = false; // Variable para el estado de carga del botón
 
   constructor(private fb: FormBuilder, private profileService: ProfileService) {
     this.profileForm = this.fb.group({
       fullName: ['', Validators.required],
       email: [{ value: '', disabled: true }],
-      
-      // La contraseña es opcional, pero si se escribe, debe tener un mínimo de 8 caracteres
       newPassword: ['', [Validators.minLength(8)]],
-      
       streetAddress: ['', Validators.required],
       cityStateZip: ['', [
         Validators.required,
@@ -49,58 +38,41 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  formatSsn(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 9);
+    let formatted = digits;
+    if (digits.length > 5) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5)}`;
+    } else if (digits.length > 3) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    }
+    input.value = formatted;
+    this.profileForm.get('ssn')?.setValue(formatted, { emitEvent: false });
+  }
+
   onSubmit(): void {
     this.successMessage.set(null);
     this.errorMessage.set(null);
 
-    // Filtramos los valores nulos o vacíos para no enviar campos que no se quieren cambiar
     const formData = Object.fromEntries(
       Object.entries(this.profileForm.getRawValue()).filter(([key, value]) => value !== '' && value !== null)
     );
 
     if (Object.keys(formData).length === 0) {
-        this.errorMessage.set("No hay cambios para guardar.");
-        return;
+      this.errorMessage.set('No hay cambios para guardar.');
+      return;
     }
 
     this.profileService.updateProfile(formData).subscribe({
-        next: () => {
-            this.successMessage.set('¡Perfil actualizado con éxito!');
-            this.profileForm.get('newPassword')?.reset(''); // Limpiamos el campo de contraseña
-            setTimeout(() => this.successMessage.set(null), 3000);
-        },
-        error: () => {
-            this.errorMessage.set('Error al actualizar el perfil.');
-        }
-    });
-  }
-  onCancelSubscription(): void {
-    if (confirm('¿Estás seguro de que quieres cancelar tu suscripción? Tu plan permanecerá activo hasta el final del ciclo de facturación.')) {
-      this.paymentService.cancelSubscription().subscribe({
-        next: (message) => {
-          this.successMessage.set(message);
-          // Aquí podríamos también recargar el estado del perfil para mostrar que está "Cancelado"
-        },
-        error: (err) => {
-          this.errorMessage.set(err.error?.message || 'Error al cancelar la suscripción.');
-        }
-      });
-    }
-  }
-
-  manageSubscription() {
-    this.isLoadingPortal = true;
-    this.paymentService.createPortalSession().subscribe({
-      next: (res) => {
-        // Redirigimos al usuario al portal de Stripe
-        window.location.href = res.url;
+      next: () => {
+        this.successMessage.set('Perfil actualizado con exito!');
+        this.profileForm.get('newPassword')?.reset('');
+        setTimeout(() => this.successMessage.set(null), 3000);
       },
-      error: (err) => {
-        console.error(err);
-        alert('Error al acceder al portal de facturación.');
-        this.isLoadingPortal = false;
+      error: () => {
+        this.errorMessage.set('Error al actualizar el perfil.');
       }
     });
   }
-  
 }

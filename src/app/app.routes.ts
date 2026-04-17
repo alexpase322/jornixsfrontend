@@ -20,6 +20,7 @@ import { DetailedReportComponent } from './features/admin/detailed-report/detail
 import { TimesheetHistoryComponent } from './features/timesheet-history/timesheet-history';
 import { LandingComponent } from './landing/landing';
 import { PaymentSuccess } from './features/payment/payment-success/payment-success';
+import { CompanyInfoComponent } from './features/admin/company-info/company-info';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -68,6 +69,7 @@ export const routes: Routes = [
       { path: 'locations/:id/edit', component: LocationForm, data: { breadcrumb: 'Editar Lugar' } },
       { path: 'approvals', component: TimesheetApprovalComponent, data: { breadcrumb: 'Aprobaciones' } },
       { path: 'reports/detailed/:workerId', component: DetailedReportComponent, data: { breadcrumb: 'Reporte Detallado' } },
+      { path: 'company', component: CompanyInfoComponent, data: { breadcrumb: 'Company' } },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

@@ -20,9 +20,9 @@
       <h3 class="text-lg font-semibold text-gray-300 border-b border-gray-600 pb-2 pt-6">Safety</h3>
       <div class="pt-4">
         <label class="block text-gray-300 text-sm font-bold mb-2">New Password</label>
-        <input formControlName="newPassword" type="password" class="form-input" placeholder="Dejar en blanco para no cambiar">
+        <input formControlName="newPassword" type="password" class="form-input" placeholder="Leave blank to keep current">
         <div *ngIf="profileForm.get('newPassword')?.hasError('minlength')" class="text-red-400 text-xs mt-1">
-            The password must be at least 8 characters long.
+          The password must be at least 8 characters long.
         </div>
       </div>
 
@@ -45,7 +45,13 @@
         </div>
         <div>
           <label class="block text-gray-300 text-sm font-bold mb-2">Social Security (SSN)</label>
-          <input formControlName="ssn" class="form-input" placeholder="###-##-####">
+          <input
+            formControlName="ssn"
+            class="form-input"
+            placeholder="123-45-6789"
+            maxlength="11"
+            inputmode="numeric"
+            (input)="formatSsn($event)">
           <div *ngIf="profileForm.get('ssn')?.invalid && profileForm.get('ssn')?.touched" class="text-red-400 text-xs mt-1">
             <span *ngIf="profileForm.get('ssn')?.hasError('required')">This field is required.</span>
             <span *ngIf="profileForm.get('ssn')?.hasError('pattern')">Invalid format. Must be ###-##-####.</span>
@@ -53,47 +59,16 @@
         </div>
       </div>
     </div>
-    
+
     <button type="submit" [disabled]="profileForm.invalid" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md disabled:bg-gray-500 disabled:cursor-not-allowed">
       Save Changes
     </button>
   </form>
-
 
   <div *ngIf="successMessage()" class="mt-4 text-center bg-green-800 text-green-200 p-3 rounded-md">
     {{ successMessage() }}
   </div>
   <div *ngIf="errorMessage()" class="mt-4 text-center bg-red-800 text-red-200 p-3 rounded-md">
     {{ errorMessage() }}
-  </div>
-
-  <div *ngIf="userRole() === 'ROLE_ADMINISTRADOR'">
-    <div class="bg-white p-6 rounded-lg shadow mt-8 border-t border-gray-200">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-lg font-medium text-gray-900 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-            </svg>
-            Suscripción y Facturación
-          </h3>
-          <p class="text-gray-500 mt-1 text-sm">
-            Gestiona tu plan actual, descarga tus facturas mensuales o actualiza tu método de pago.
-          </p>
-        </div>
-        
-        <button (click)="manageSubscription()" 
-                [disabled]="isLoadingPortal"
-                class="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-wait shadow-sm">
-          
-          <svg *ngIf="isLoadingPortal" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          
-          {{ isLoadingPortal ? 'Cargando Portal...' : 'Gestionar Suscripción' }}
-        </button>
-      </div>
-    </div>
   </div>
 </div>

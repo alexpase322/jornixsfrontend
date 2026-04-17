@@ -16,11 +16,10 @@ export class PaymentService {
   }
 
   cancelSubscription(): Observable<string> {
-    // El backend devuelve un string de confirmación
-    return this.http.post(`${environment.apiUrl}/payments/cancel-subscription`, {}, { responseType: 'text' });
+    return this.http.post(`${this.PAYMENT_URL}/cancel-subscription`, {}, { responseType: 'text' });
   }
 
   createPortalSession(): Observable<{ url: string }> {
-    return this.http.post<{ url: string }>(`${environment.apiUrl}/create-portal-session`, {});
+    return this.http.post<{ url: string }>(`${this.PAYMENT_URL}/create-portal-session`, {});
   }
 }

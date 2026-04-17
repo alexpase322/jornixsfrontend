@@ -57,10 +57,22 @@ export class CompleteRegistrationComponent implements OnInit {
     };
 
     this.authService.completeRegistration(formData).subscribe({
-      // El éxito es manejado por el servicio, que redirige al dashboard
       error: (err) => {
         this.errorMessage.set(err.error?.message || 'Ocurrió un error al completar el registro.');
       }
     });
+  }
+
+  formatSsn(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 9);
+    let formatted = digits;
+    if (digits.length > 5) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5)}`;
+    } else if (digits.length > 3) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    }
+    input.value = formatted;
+    this.registrationForm.get('ssn')?.setValue(formatted, { emitEvent: false });
   }
 }
