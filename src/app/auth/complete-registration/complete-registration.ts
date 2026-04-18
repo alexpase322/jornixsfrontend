@@ -39,7 +39,7 @@ export class CompleteRegistrationComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       this.registrationToken = params.get('token');
       if (!this.registrationToken) {
-        this.errorMessage.set('Token de registro no encontrado o inválido.');
+        this.errorMessage.set('Registration token not found or invalid.');
         // Opcional: redirigir a una página de error o al login
         // this.router.navigate(['/login']);
       }
@@ -58,7 +58,7 @@ export class CompleteRegistrationComponent implements OnInit {
 
     this.authService.completeRegistration(formData).subscribe({
       error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Ocurrió un error al completar el registro.');
+        this.errorMessage.set(err.error?.message || 'An error occurred while completing registration.');
       }
     });
   }

@@ -26,7 +26,7 @@ export class LocationListComponent implements OnInit {
   }
 
   deleteLocation(id: number): void {
-    if (confirm('¿Estás seguro de que quieres eliminar este lugar de trabajo?')) {
+    if (confirm('Are you sure you want to delete this work location?')) {
       this.locationService.deleteLocation(id).subscribe(() => {
         this.loadLocations(); // Recargar la lista después de borrar
       });

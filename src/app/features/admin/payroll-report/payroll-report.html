@@ -37,7 +37,7 @@
   <div *ngIf="consolidatedReport() as r">
     <div class="flex justify-between items-center">
       <h3 class="text-xl font-bold">
-        Consolidated Report: {{ r.startDate | date:'d/MM/y' }} - {{ r.endDate | date:'d/MM/y' }}
+        Consolidated Report: {{ r.startDate | date:'MM/dd/yyyy' }} - {{ r.endDate | date:'MM/dd/yyyy' }}
       </h3>
       <div class="flex gap-2">
         <button (click)="downloadPdf()" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-3 rounded text-sm">
@@ -90,10 +90,10 @@
         </button>
       </div>
     </div>
-    <p class="text-gray-400">Period: {{ r.startDate | date:'d/MM/y' }} - {{ r.endDate | date:'d/MM/y' }}</p>
+    <p class="text-gray-400">Period: {{ r.startDate | date:'MM/dd/yyyy' }} - {{ r.endDate | date:'MM/dd/yyyy' }}</p>
 
     <div *ngFor="let weeklySummary of r.weeklySummaries" class="bg-gray-700 p-4 rounded-lg mt-4">
-      <h4 class="text-lg font-bold mb-2">Week: {{ weeklySummary.workWeek.startDate | date:'d MMM' }} - {{ weeklySummary.workWeek.endDate | date:'d MMM' }}</h4>
+      <h4 class="text-lg font-bold mb-2">Week: {{ weeklySummary.workWeek.startDate | date:'MM/dd/yyyy' }} - {{ weeklySummary.workWeek.endDate | date:'MM/dd/yyyy' }}</h4>
       <table class="min-w-full text-sm mb-2">
         <thead>
           <tr class="border-b border-gray-600">
@@ -110,7 +110,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let daily of r.dailySummariesByWeek[weeklySummary.workWeek.id]" class="border-b border-gray-500">
-            <td class="td-style">{{ daily.date | date:'EEEE, d' }}</td>
+            <td class="td-style">{{ daily.date | date:'EEEE, MM/dd/yyyy' }}</td>
             <td class="td-style">{{ daily.workLocationName }}</td>
             <td class="td-style font-mono">{{ daily.clockInTime?.slice(0, 5) }}</td>
             <td class="td-style font-mono">{{ daily.startLunchTime?.slice(0, 5) }}</td>

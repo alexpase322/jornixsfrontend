@@ -4,7 +4,7 @@ import { TimeLogService } from '../../../core/services/time-log';
 import { ClockInRequest, TimeLog } from '../../../core/models/timelog.models';
 import { TimesheetService } from '../../../core/services/timesheet';
 
-type WorkerStatus = 'Trabajando' | 'En Almuerzo' | 'Fuera de Oficina' | 'Jornada Finalizada';
+type WorkerStatus = 'Working' | 'On Lunch' | 'Out of Office' | 'Shift Finished';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,14 +14,15 @@ type WorkerStatus = 'Trabajando' | 'En Almuerzo' | 'Fuera de Oficina' | 'Jornada
 })
 export class DashboardComponent implements OnInit {
   public weeklyLogs = signal<TimeLog[]>([]);
-  public currentStatus = signal<WorkerStatus>('Fuera de Oficina');
+  public currentStatus = signal<WorkerStatus>('Out of Office');
   public errorMessage = signal<string | null>(null);
   public successMessage = signal<string | null>(null);
   private readonly deviceTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  private readonly dateFormatter = new Intl.DateTimeFormat(undefined, {
+  private readonly dateFormatter = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
-    day: 'numeric',
-    month: 'long',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     timeZone: this.deviceTimeZone,
   });
   private readonly timeFormatter = new Intl.DateTimeFormat(undefined, {
@@ -45,29 +46,29 @@ export class DashboardComponent implements OnInit {
         this.weeklyLogs.set(normalizedLogs);
         this.updateStatus(normalizedLogs);
       },
-      error: (err) => this.handleError('No se pudieron cargar los registros.'),
+      error: (err) => this.handleError('Could not load time records.'),
     });
   }
 
   private updateStatus(logs: TimeLog[]): void {
     if (logs.length === 0) {
-      this.currentStatus.set('Fuera de Oficina');
+      this.currentStatus.set('Out of Office');
       return;
     }
     const lastLog = logs[logs.length - 1].eventType;
     switch (lastLog) {
       case 'INGRESO':
       case 'FINAL_ALMUERZO':
-        this.currentStatus.set('Trabajando');
+        this.currentStatus.set('Working');
         break;
       case 'INICIO_ALMUERZO':
-        this.currentStatus.set('En Almuerzo');
+        this.currentStatus.set('On Lunch');
         break;
       case 'SALIDA':
-        this.currentStatus.set('Jornada Finalizada');
+        this.currentStatus.set('Shift Finished');
         break;
       default:
-        this.currentStatus.set('Fuera de Oficina');
+        this.currentStatus.set('Out of Office');
     }
   }
 
@@ -75,7 +76,7 @@ export class DashboardComponent implements OnInit {
 
   onClockIn(): void {
     if (!navigator.geolocation) {
-      this.handleError('La geolocalización no es compatible con este navegador.');
+      this.handleError('Geolocation is not supported by this browser.');
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -86,31 +87,31 @@ export class DashboardComponent implements OnInit {
         };
         this.timeLogService.clockIn(coords).subscribe({
           next: () => this.loadLogs(),
-          error: (err) => this.handleError(err.error.message || 'Error al marcar ingreso.'),
+          error: (err) => this.handleError(err.error?.message || 'Error clocking in.'),
         });
       },
-      () => this.handleError('No se pudo obtener la ubicación. Asegúrate de dar los permisos.')
+      () => this.handleError('Could not get location. Make sure to grant permissions.')
     );
   }
 
   onStartLunch(): void {
     this.timeLogService.startLunch().subscribe({
       next: () => this.loadLogs(),
-      error: (err) => this.handleError('Error al iniciar almuerzo.'),
+      error: (err) => this.handleError(err.error?.message || 'Error starting lunch.'),
     });
   }
 
   onEndLunch(): void {
     this.timeLogService.endLunch().subscribe({
       next: () => this.loadLogs(),
-      error: (err) => this.handleError('Error al finalizar almuerzo.'),
+      error: (err) => this.handleError(err.error?.message || 'Error ending lunch.'),
     });
   }
 
   onClockOut(): void {
     this.timeLogService.clockOut().subscribe({
       next: () => this.loadLogs(),
-      error: (err) => this.handleError('Error al marcar salida.'),
+      error: (err) => this.handleError(err.error?.message || 'Error clocking out.'),
     });
   }
   
@@ -179,7 +180,7 @@ export class DashboardComponent implements OnInit {
 
   formatEventType(eventType: TimeLog['eventType'] | string | null | undefined): string {
     if (!eventType) {
-      return 'SIN EVENTO';
+      return 'NO EVENT';
     }
     return eventType.replace('_', ' ');
   }
@@ -187,25 +188,25 @@ export class DashboardComponent implements OnInit {
   submitWeek(): void {
     const logs = this.weeklyLogs();
     if (logs.length === 0) {
-      this.handleError("No hay horas registradas para enviar esta semana.");
+      this.handleError("No hours recorded to submit this week.");
       return;
     }
     
     // Obtenemos el ID de la semana del último registro
     const currentWeekId = logs[logs.length - 1]?.workWeekId;
     if (!currentWeekId) {
-      this.handleError('No se pudo identificar la semana actual para enviar aprobación.');
+      this.handleError('Could not identify the current week to submit for approval.');
       return;
     }
 
-    if (confirm('¿Estás seguro de que quieres enviar tus horas de esta semana? Una vez enviadas, no podrás modificarlas.')) {
+    if (confirm('Are you sure you want to submit your hours for this week? Once submitted, you will not be able to modify them.')) {
         this.timesheetService.submitWeek(currentWeekId).subscribe({
             next: (message) => {
                 this.successMessage.set(message);
                 this.loadLogs(); // Recargamos para actualizar el estado
                 setTimeout(() => this.successMessage.set(null), 3000);
             },
-            error: (err) => this.handleError(err.error?.message || 'Error al enviar la hoja de horas.')
+            error: (err) => this.handleError(err.error?.message || 'Error submitting timesheet.')
         });
     }
   }

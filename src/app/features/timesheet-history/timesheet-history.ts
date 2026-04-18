@@ -51,7 +51,7 @@ export class TimesheetHistoryComponent implements OnInit {
   }
 
   resubmit(timesheetId: number): void {
-    if (confirm('¿Estás seguro de que quieres reabrir esta hoja de horas para editarla?')) {
+    if (confirm('Are you sure you want to reopen this timesheet for editing?')) {
       this.timesheetService.resubmitTimesheet(timesheetId).subscribe(() => this.loadTimesheets());
     }
   }

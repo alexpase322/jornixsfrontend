@@ -81,7 +81,7 @@ export class AdminDashboardComponent implements OnInit {
         this.isLoadingStats.set(false);
       },
       error: () => {
-        this.dashboardError.set('No se pudo cargar la información del dashboard.');
+        this.dashboardError.set('Could not load dashboard information.');
         this.isLoadingStats.set(false);
       }
     });
@@ -136,7 +136,7 @@ export class AdminDashboardComponent implements OnInit {
       return '--';
     }
 
-    return parsed.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+    return parsed.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
   }
 
   loadPendingTimesheets(): void {

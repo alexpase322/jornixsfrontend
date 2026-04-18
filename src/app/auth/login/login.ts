@@ -37,9 +37,8 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         // El éxito se maneja dentro del servicio (redirige al dashboard)
         error: (err) => {
-          // Manejo de errores de la API
-          console.error('Error en el login:', err);
-          this.errorMessage = 'Credenciales incorrectas. Por favor, inténtalo de nuevo.';
+          console.error('Login error:', err);
+          this.errorMessage = err?.error?.message || 'Invalid credentials. Please try again.';
         }
       });
     }

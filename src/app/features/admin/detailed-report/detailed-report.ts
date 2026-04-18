@@ -41,20 +41,22 @@ export class DetailedReportComponent implements OnInit {
   public selectedLog = signal<TimeLog | null>(null);
   public dateForNewLog = signal<string | null>(null);
   private readonly deviceTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  private readonly longDateFormatter = new Intl.DateTimeFormat(undefined, {
-    day: 'numeric',
-    month: 'short',
+  private readonly longDateFormatter = new Intl.DateTimeFormat('en-US', {
+    month: '2-digit',
+    day: '2-digit',
     year: 'numeric',
     timeZone: this.deviceTimeZone
   });
-  private readonly weekDateFormatter = new Intl.DateTimeFormat(undefined, {
-    day: 'numeric',
-    month: 'short',
+  private readonly weekDateFormatter = new Intl.DateTimeFormat('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
     timeZone: this.deviceTimeZone
   });
-  private readonly dailyDateFormatter = new Intl.DateTimeFormat(undefined, {
+  private readonly dailyDateFormatter = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     timeZone: this.deviceTimeZone
   });
   private readonly timeFormatter = new Intl.DateTimeFormat(undefined, {

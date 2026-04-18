@@ -31,7 +31,7 @@ export class ResetPasswordComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       this.resetToken = params.get('token');
       if (!this.resetToken) {
-        this.errorMessage.set('Token inválido o no encontrado.');
+        this.errorMessage.set('Invalid or missing token.');
         this.resetPasswordForm.disable();
       }
     });
@@ -50,7 +50,7 @@ export class ResetPasswordComponent implements OnInit {
         this.successMessage.set(message);
         setTimeout(() => this.router.navigate(['/login']), 3000);
       },
-      error: (err) => this.errorMessage.set(err.error?.message || 'Error al restablecer la contraseña.')
+      error: (err) => this.errorMessage.set(err.error?.message || 'Error resetting password.')
     });
   }
 }

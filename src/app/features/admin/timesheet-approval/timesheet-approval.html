@@ -12,7 +12,7 @@
       <tbody>
         <tr *ngFor="let ts of timesheets()" class="border-b border-gray-600 hover:bg-gray-700">
           <td class="td-style">{{ ts.workerName }}</td>
-          <td class="td-style">{{ ts.weekStartDate | date:'d MMM' }} - {{ ts.weekEndDate | date:'d MMM, y' }}</td>
+          <td class="td-style">{{ ts.weekStartDate | date:'MM/dd/yyyy' }} - {{ ts.weekEndDate | date:'MM/dd/yyyy' }}</td>
           <td class="td-style space-x-2">
             <button (click)="approve(ts.timesheetId)" class="bg-green-600 hover:bg-green-700 font-bold py-1 px-3 rounded">Approve</button>
             <button (click)="reject(ts.timesheetId)" class="bg-red-600 hover:bg-red-700 font-bold py-1 px-3 rounded">Reject</button>

@@ -7,25 +7,25 @@
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1 md:col-span-2">
       <h3 class="text-gray-400 text-sm font-medium">Quick Actions</h3>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-        <button (click)="onClockIn()" 
-                [disabled]="currentStatus() !== 'Fuera de Oficina' && currentStatus() !== 'Jornada Finalizada'" 
+        <button (click)="onClockIn()"
+                [disabled]="currentStatus() !== 'Out of Office' && currentStatus() !== 'Shift Finished'"
                 class="action-button bg-green-600 hover:bg-green-700">
-          Mark Entry
+          Clock In
         </button>
-        <button (click)="onStartLunch()" 
-                [disabled]="currentStatus() !== 'Trabajando'" 
+        <button (click)="onStartLunch()"
+                [disabled]="currentStatus() !== 'Working'"
                 class="action-button bg-yellow-600 hover:bg-yellow-700">
           Start Lunch
         </button>
-        <button (click)="onEndLunch()" 
-                [disabled]="currentStatus() !== 'En Almuerzo'" 
+        <button (click)="onEndLunch()"
+                [disabled]="currentStatus() !== 'On Lunch'"
                 class="action-button bg-blue-600 hover:bg-blue-700">
           End Lunch
         </button>
-        <button (click)="onClockOut()" 
-                [disabled]="currentStatus() !== 'Trabajando'" 
+        <button (click)="onClockOut()"
+                [disabled]="currentStatus() !== 'Working'"
                 class="action-button bg-red-600 hover:bg-red-700">
-          Mark Exit
+          Clock Out
         </button>
       </div>
     </div>

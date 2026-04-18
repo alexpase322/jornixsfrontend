@@ -74,7 +74,7 @@ export class LandingComponent {
   // --- MÉTODO ACTUALIZADO ---
   subscribe(planPriceId: string): void {
     if (this.termsAccepted.invalid) {
-      alert('Debes aceptar los términos y condiciones para continuar.');
+      alert('You must accept the terms and conditions to continue.');
       return;
     }
     
@@ -85,8 +85,8 @@ export class LandingComponent {
         window.location.href = session.url;
       },
       error: (err) => {
-        console.error('Error al crear la sesión de pago:', err);
-        alert('Hubo un problema al iniciar el proceso de pago. Por favor, inténtalo de nuevo más tarde.');
+        console.error('Error creating payment session:', err);
+        alert('There was a problem starting the payment process. Please try again later.');
       }
     });
   }
@@ -102,7 +102,7 @@ export class LandingComponent {
   // Método de compra
   buyPlan(priceId: string) {
     if (!priceId || priceId.includes('PON_AQUI')) {
-      alert('El plan anual aún no está configurado.');
+      alert('The annual plan is not configured yet.');
       return;
     }
 
