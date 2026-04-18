@@ -43,15 +43,6 @@ export class PayrollReportComponent implements OnInit {
     this.adminService.getWorkers('ALL').subscribe(data => this.workers.set(data));
   }
 
-  // Convert ISO (YYYY-MM-DD) from native date input to MM/DD/YYYY for display overlay
-  formatDateDisplay(isoDate: string | null | undefined): string {
-    if (!isoDate) return '';
-    const parts = isoDate.split('-');
-    if (parts.length !== 3) return isoDate;
-    const [y, m, d] = parts;
-    return `${m}/${d}/${y}`;
-  }
-
   // Filename-safe date fragment: YYYY-MM-DD → MM-DD-YYYY
   private dateForFilename(isoDate: string): string {
     if (!isoDate) return '';
