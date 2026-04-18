@@ -29,6 +29,28 @@
     @apply py-2 px-3;
 }
 
+/* Force MM/DD/YYYY display on native <input type="date"> regardless of browser locale.
+   Hide the native text parts and show our formatted overlay span on top.
+   The calendar picker icon remains clickable. */
+.date-input-hidden::-webkit-datetime-edit {
+    color: transparent;
+}
+.date-input-hidden::-webkit-datetime-edit-year-field,
+.date-input-hidden::-webkit-datetime-edit-month-field,
+.date-input-hidden::-webkit-datetime-edit-day-field,
+.date-input-hidden::-webkit-datetime-edit-text {
+    color: transparent;
+}
+.date-overlay {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: white;
+    font-family: inherit;
+}
+
 [appAnimateOnScroll] {
   opacity: 0;
   transform: translateY(30px);
