@@ -97,28 +97,28 @@
       <table class="min-w-full text-sm mb-2">
         <thead>
           <tr class="border-b border-gray-600">
-            <th class="th-style">Date</th>
-            <th class="th-style">Workplace</th>
-            <th class="th-style">Clock In</th>
-            <th class="th-style">Lunch Start</th>
-            <th class="th-style">Lunch End</th>
-            <th class="th-style">Clock Out</th>
-            <th class="th-style text-right">Hours Worked</th>
-            <th class="th-style text-right">Rate</th>
-            <th class="th-style text-right">Daily Total</th>
+            <th class="th-style text-center">Date</th>
+            <th class="th-style text-center">Workplace</th>
+            <th class="th-style text-center">Clock In</th>
+            <th class="th-style text-center">Lunch Start</th>
+            <th class="th-style text-center">Lunch End</th>
+            <th class="th-style text-center">Clock Out</th>
+            <th class="th-style text-center">Hours Worked</th>
+            <th class="th-style text-center">Rate</th>
+            <th class="th-style text-center">Daily Total</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let daily of r.dailySummariesByWeek[weeklySummary.workWeek.id]" class="border-b border-gray-500">
-            <td class="td-style">{{ daily.date | date:'EEEE, MM/dd/yyyy' }}</td>
-            <td class="td-style">{{ daily.workLocationName }}</td>
-            <td class="td-style font-mono">{{ daily.clockInTime?.slice(0, 5) }}</td>
-            <td class="td-style font-mono">{{ daily.startLunchTime?.slice(0, 5) }}</td>
-            <td class="td-style font-mono">{{ daily.endLunchTime?.slice(0, 5) }}</td>
-            <td class="td-style font-mono">{{ daily.clockOutTime?.slice(0, 5) }}</td>
-            <td class="td-style text-right font-mono">{{ daily.totalHours.toFixed(2) }}</td>
-            <td class="td-style text-right font-mono">{{ daily.dailyRate | currency }}</td>
-            <td class="td-style text-right font-mono font-bold">{{ daily.totalPay | currency }}</td>
+            <td class="td-style text-center">{{ daily.date | date:'EEEE, MM/dd/yyyy' }}</td>
+            <td class="td-style text-center">{{ daily.workLocationName }}</td>
+            <td class="td-style text-center font-mono">{{ daily.clockInTime?.slice(0, 5) }}</td>
+            <td class="td-style text-center font-mono">{{ daily.startLunchTime?.slice(0, 5) }}</td>
+            <td class="td-style text-center font-mono">{{ daily.endLunchTime?.slice(0, 5) }}</td>
+            <td class="td-style text-center font-mono">{{ daily.clockOutTime?.slice(0, 5) }}</td>
+            <td class="td-style text-center font-mono">{{ daily.totalHours.toFixed(2) }}</td>
+            <td class="td-style text-center font-mono">{{ daily.dailyRate | currency }}</td>
+            <td class="td-style text-center font-mono font-bold">{{ daily.totalPay | currency }}</td>
           </tr>
         </tbody>
       </table>
