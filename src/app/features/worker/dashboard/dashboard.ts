@@ -182,7 +182,15 @@ export class DashboardComponent implements OnInit {
     if (!eventType) {
       return 'NO EVENT';
     }
-    return eventType.replace('_', ' ');
+    // Map backend Spanish event types to English display labels.
+    // Backend data is NOT modified — only the UI representation is translated.
+    const translations: Record<string, string> = {
+      'INGRESO': 'Clock In',
+      'INICIO_ALMUERZO': 'Lunch Start',
+      'FINAL_ALMUERZO': 'Lunch End',
+      'SALIDA': 'Clock Out'
+    };
+    return translations[eventType] ?? eventType.replace('_', ' ');
   }
 
   submitWeek(): void {
