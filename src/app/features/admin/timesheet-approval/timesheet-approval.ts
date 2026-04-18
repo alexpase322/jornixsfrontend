@@ -26,7 +26,7 @@ export class TimesheetApprovalComponent implements OnInit {
   }
 
   reject(id: number): void {
-    const reason = prompt('Por favor, introduce el motivo del rechazo:');
+    const reason = prompt('Please enter the reason for the rejection:');
     if (reason) {
       this.timesheetService.rejectTimesheet(id, reason).subscribe(() => this.loadTimesheets());
     }
