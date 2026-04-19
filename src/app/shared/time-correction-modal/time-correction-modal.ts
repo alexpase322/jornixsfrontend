@@ -64,7 +64,7 @@ export class TimeCorrectionModalComponent implements OnInit {
 
     if (this.userRole() === 'ROLE_ADMINISTRADOR') {
       if (!this.workerId) {
-        console.error("Error: Se requiere un ID de trabajador para la corrección del administrador.");
+        console.error("Error: A worker ID is required for administrator correction.");
         return;
       }
       // Construye la petición para el endpoint del administrador

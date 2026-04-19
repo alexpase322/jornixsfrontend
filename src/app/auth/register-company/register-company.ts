@@ -45,7 +45,7 @@ export class RegisterCompanyComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       this.inviteToken = params.get('token');
       if (!this.inviteToken) {
-        this.errorMessage.set('Enlace de registro invalido. Por favor, utiliza el enlace enviado a tu correo electronico.');
+        this.errorMessage.set('Invalid registration link. Please use the link sent to your email.');
         this.registrationForm.disable();
       }
     });

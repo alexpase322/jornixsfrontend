@@ -40,30 +40,32 @@ export class DetailedReportComponent implements OnInit {
   public isModalOpen = signal(false);
   public selectedLog = signal<TimeLog | null>(null);
   public dateForNewLog = signal<string | null>(null);
-  private readonly deviceTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // Backend stores timestamps as UTC (LocalDateTime on a UTC server).
+  // All date/time display is normalized to America/New_York (US East Coast).
+  private readonly displayTimeZone = 'America/New_York';
   private readonly longDateFormatter = new Intl.DateTimeFormat('en-US', {
     month: '2-digit',
     day: '2-digit',
     year: 'numeric',
-    timeZone: this.deviceTimeZone
+    timeZone: this.displayTimeZone
   });
   private readonly weekDateFormatter = new Intl.DateTimeFormat('en-US', {
     month: '2-digit',
     day: '2-digit',
     year: 'numeric',
-    timeZone: this.deviceTimeZone
+    timeZone: this.displayTimeZone
   });
   private readonly dailyDateFormatter = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     month: '2-digit',
     day: '2-digit',
-    timeZone: this.deviceTimeZone
+    timeZone: this.displayTimeZone
   });
-  private readonly timeFormatter = new Intl.DateTimeFormat(undefined, {
+  private readonly timeFormatter = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-    timeZone: this.deviceTimeZone
+    timeZone: this.displayTimeZone
   });
 
   constructor() {}
@@ -152,16 +154,18 @@ export class DetailedReportComponent implements OnInit {
       return null;
     }
 
-    // Acepta HH:MM, HH:MM:SS, y HH:MM:SS.xxxxxx (con microsegundos del backend Java LocalTime)
+    // Accepts HH:MM, HH:MM:SS, and HH:MM:SS.xxxxxx (Java LocalTime microseconds).
+    // The backend stores time as UTC, so we build the Date in UTC and let the
+    // formatter convert to the displayTimeZone (America/New_York).
     const timeMatch = value.match(/^(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?$/);
     if (timeMatch) {
       const [, hours, minutes, seconds] = timeMatch;
-      return new Date(
+      return new Date(Date.UTC(
         1970, 0, 1,
         parseInt(hours, 10),
         parseInt(minutes, 10),
         seconds ? parseInt(seconds, 10) : 0
-      );
+      ));
     }
 
     return this.normalizeTimestamp(value);

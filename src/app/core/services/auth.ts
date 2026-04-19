@@ -98,11 +98,11 @@ export class AuthService {
         return decodedToken.authorities[0];
       }
 
-      console.error('No se pudo encontrar el rol en el token. Payload:', decodedToken);
+      console.error('Could not find role in token. Payload:', decodedToken);
       this.clearSession(false);
       return null;
     } catch (error) {
-      console.error('Token guardado es inválido. Forzando cierre de sesión.', error);
+      console.error('Stored token is invalid. Forcing sign out.', error);
       this.clearSession(false);
       return null;
     }

@@ -8,6 +8,6 @@ import { CommonModule } from '@angular/common';
   templateUrl: './modal.html',
 })
 export class ModalComponent {
-  @Input() title: string = 'Atención';
+  @Input() title: string = 'Notice';
   @Output() close = new EventEmitter<void>();
 }

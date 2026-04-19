@@ -49,7 +49,7 @@ export class WorkerInviteComponent implements OnInit{
         setTimeout(() => this.router.navigate(['/admin/workers']), 2000); // Redirige a la lista tras 2 segundos
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Error al enviar la invitación.');
+        this.errorMessage.set(err.error?.message || 'Error sending invitation.');
       }
     });
   }

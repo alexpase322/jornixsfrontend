@@ -207,7 +207,7 @@
       <div class="space-y-4">
         <div>
           <button (click)="toggleFaq(0)" class="w-full text-left flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 rounded-lg text-lg font-semibold transition-colors">
-            <span>¿My information and that of my employees is secure.?</span>
+            <span>Is my information and that of my employees secure?</span>
             <svg class="w-6 h-6 transition-transform duration-300" [ngClass]="{'rotate-180': openFaq === 0}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
           <div class="transition-all duration-500 ease-in-out overflow-hidden" [ngClass]="openFaq === 0 ? 'max-h-96' : 'max-h-0'">
@@ -216,7 +216,7 @@
         </div>
         <div>
           <button (click)="toggleFaq(1)" class="w-full text-left flex justify-between items-center p-4 bg-gray-800 hover:bg-gray-700 rounded-lg text-lg font-semibold transition-colors">
-            <span>¿I can cancel my subscription at any time.?</span>
+            <span>Can I cancel my subscription at any time?</span>
             <svg class="w-6 h-6 transition-transform duration-300" [ngClass]="{'rotate-180': openFaq === 1}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
           <div class="transition-all duration-500 ease-in-out overflow-hidden" [ngClass]="openFaq === 1 ? 'max-h-96' : 'max-h-0'">
@@ -233,7 +233,7 @@
     </div>
   </footer>
 
-  <app-modal *ngIf="isTermsModalOpen()" title="Términos y Condiciones del Servicio" (close)="isTermsModalOpen.set(false)">
+  <app-modal *ngIf="isTermsModalOpen()" title="Terms and Conditions of Service" (close)="isTermsModalOpen.set(false)">
     <div class="prose prose-invert max-w-none text-gray-300">
       
       <h4>Date of last update: October 14, 2025</h4>
