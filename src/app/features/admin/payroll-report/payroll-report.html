@@ -20,13 +20,13 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-300">Start Date</label>
-            <input type="date" formControlName="startDate" class="form-input mt-1">
+            <label class="block text-sm font-medium text-gray-300">Start Date (MM/DD/YYYY)</label>
+            <input type="date" formControlName="startDate" lang="en-US" class="form-input mt-1 date-mmddyyyy">
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-300">End Date</label>
-            <input type="date" formControlName="endDate" class="form-input mt-1">
+            <label class="block text-sm font-medium text-gray-300">End Date (MM/DD/YYYY)</label>
+            <input type="date" formControlName="endDate" lang="en-US" class="form-input mt-1 date-mmddyyyy">
         </div>
     </div>
     <button type="submit" [disabled]="reportForm.invalid || isLoading()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md disabled:bg-gray-500 w-full md:w-auto">
