@@ -6,7 +6,7 @@
         <div>
           <label class="block text-gray-300 text-sm font-bold mb-2">Event Type</label>
           <select formControlName="eventType" class="form-input">
-            <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+            <option *ngFor="let opt of eventTypeOptions" [value]="opt.value">{{ opt.label }}</option>
           </select>
         </div>
         <div>

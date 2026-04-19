@@ -24,51 +24,51 @@
         <table class="min-w-full text-sm mb-2">
             <thead>
               <tr class="border-b border-gray-600">
-                <th class="th-style">Date</th>
-                <th class="th-style">Workplace</th>
-                <th class="th-style">Clock In</th>
-                <th class="th-style">Lunch Start</th>
-                <th class="th-style">Lunch End</th>
-                <th class="th-style">Clock Out</th>
-                <th class="th-style text-right">Hours Worked</th>
-                <th class="th-style text-right">Rate</th>
-                <th class="th-style text-right">Daily Total</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Date</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Workplace</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Clock In</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Lunch Start</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Lunch End</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Clock Out</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Hours Worked</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Rate</th>
+                <th class="py-2 px-3 text-center text-gray-400 font-semibold">Daily Total</th>
               </tr>
             </thead>
             <tbody>
               <ng-container *ngIf="r.dailySummariesByWeek && r.dailySummariesByWeek[weeklySummary.workWeek.id] as dailySummaries; else noLogs">
                 <tr *ngFor="let daily of dailySummaries" class="border-b border-gray-500/50">
-                  <td class="td-style">{{ formatDailyDate(daily.date) }}</td>
-                  <td class="td-style">{{ daily.workLocationName }}</td>
-                  <td class="td-style font-mono">
-                    <button (click)="openCorrectionModal(daily, 'INGRESO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                  <td class="py-2 px-3 text-center">{{ formatDailyDate(daily.date) }}</td>
+                  <td class="py-2 px-3 text-center">{{ daily.workLocationName }}</td>
+                  <td class="py-2 px-3 text-center font-mono">
+                    <button (click)="openCorrectionModal(daily, 'INGRESO', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
                       {{ formatEventTime(daily.clockInTime) }}
                     </button>
                   </td>
-                  <td class="td-style font-mono">
-                    <button (click)="openCorrectionModal(daily, 'INICIO_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                  <td class="py-2 px-3 text-center font-mono">
+                    <button (click)="openCorrectionModal(daily, 'INICIO_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
                       {{ formatEventTime(daily.startLunchTime) }}
                     </button>
                   </td>
-                  <td class="td-style font-mono">
-                    <button (click)="openCorrectionModal(daily, 'FINAL_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                  <td class="py-2 px-3 text-center font-mono">
+                    <button (click)="openCorrectionModal(daily, 'FINAL_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
                       {{ formatEventTime(daily.endLunchTime) }}
                     </button>
                   </td>
-                  <td class="td-style font-mono">
-                    <button (click)="openCorrectionModal(daily, 'SALIDA', weeklySummary.workWeek.id)" class="w-full text-left hover:bg-gray-600 p-1 rounded">
+                  <td class="py-2 px-3 text-center font-mono">
+                    <button (click)="openCorrectionModal(daily, 'SALIDA', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
                       {{ formatEventTime(daily.clockOutTime) }}
                     </button>
                   </td>
-                  <td class="td-style text-right font-mono">{{ daily.totalHours.toFixed(2) }}</td>
-                  <td class="td-style text-right font-mono">{{ daily.dailyRate | currency }}</td>
-                  <td class="td-style text-right font-mono font-bold">{{ daily.totalPay | currency }}</td>
+                  <td class="py-2 px-3 text-center font-mono">{{ daily.totalHours.toFixed(2) }}</td>
+                  <td class="py-2 px-3 text-center font-mono">{{ daily.dailyRate | currency }}</td>
+                  <td class="py-2 px-3 text-center font-mono font-bold">{{ daily.totalPay | currency }}</td>
                 </tr>
               </ng-container>
 
               <ng-template #noLogs>
                 <tr>
-                  <td colspan="9" class="text-center py-4 text-gray-500">There are no detailed time records for this week..</td>
+                  <td colspan="9" class="text-center py-4 text-gray-500">There are no detailed time records for this week.</td>
                 </tr>
               </ng-template>
             </tbody>

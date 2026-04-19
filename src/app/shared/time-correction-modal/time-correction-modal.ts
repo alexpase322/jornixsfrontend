@@ -30,7 +30,14 @@ export class TimeCorrectionModalComponent implements OnInit {
 
   correctionForm: FormGroup;
   isEditMode = false;
-  eventTypes = ['INGRESO', 'INICIO_ALMUERZO', 'FINAL_ALMUERZO', 'SALIDA'];
+
+  // Values stay as backend enum (Spanish), only the label is translated for display.
+  eventTypeOptions = [
+    { value: 'INGRESO', label: 'Clock In' },
+    { value: 'INICIO_ALMUERZO', label: 'Lunch Start' },
+    { value: 'FINAL_ALMUERZO', label: 'Lunch End' },
+    { value: 'SALIDA', label: 'Clock Out' }
+  ];
 
   constructor(private fb: FormBuilder) {
     this.correctionForm = this.fb.group({
