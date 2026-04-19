@@ -41,31 +41,26 @@ export class DetailedReportComponent implements OnInit {
   public selectedLog = signal<TimeLog | null>(null);
   public dateForNewLog = signal<string | null>(null);
   // Backend stores timestamps as UTC (LocalDateTime on a UTC server).
-  // All date/time display is normalized to America/New_York (US East Coast).
-  private readonly displayTimeZone = 'America/New_York';
+  // Display uses the device's local timezone so DST is applied correctly for each log date.
   private readonly longDateFormatter = new Intl.DateTimeFormat('en-US', {
     month: '2-digit',
     day: '2-digit',
-    year: 'numeric',
-    timeZone: this.displayTimeZone
+    year: 'numeric'
   });
   private readonly weekDateFormatter = new Intl.DateTimeFormat('en-US', {
     month: '2-digit',
     day: '2-digit',
-    year: 'numeric',
-    timeZone: this.displayTimeZone
+    year: 'numeric'
   });
   private readonly dailyDateFormatter = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     month: '2-digit',
-    day: '2-digit',
-    timeZone: this.displayTimeZone
+    day: '2-digit'
   });
   private readonly timeFormatter = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false,
-    timeZone: this.displayTimeZone
+    hour12: false
   });
 
   constructor() {}
@@ -149,19 +144,23 @@ export class DetailedReportComponent implements OnInit {
     return new Date(value);
   }
 
-  private normalizeTimeValue(value: string | null): Date | null {
+  private normalizeTimeValue(value: string | null, dateContext?: string | null): Date | null {
     if (!value || typeof value !== 'string') {
       return null;
     }
 
     // Accepts HH:MM, HH:MM:SS, and HH:MM:SS.xxxxxx (Java LocalTime microseconds).
-    // The backend stores time as UTC, so we build the Date in UTC and let the
-    // formatter convert to the displayTimeZone (America/New_York).
+    // The backend stores time as UTC. We build the Date in UTC using the actual
+    // log date (when available) so DST offset is correct for that date in the
+    // device's local timezone.
     const timeMatch = value.match(/^(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?$/);
     if (timeMatch) {
       const [, hours, minutes, seconds] = timeMatch;
+      const base = this.resolveDateBase(dateContext);
       return new Date(Date.UTC(
-        1970, 0, 1,
+        base.year,
+        base.month,
+        base.day,
         parseInt(hours, 10),
         parseInt(minutes, 10),
         seconds ? parseInt(seconds, 10) : 0
@@ -169,6 +168,17 @@ export class DetailedReportComponent implements OnInit {
     }
 
     return this.normalizeTimestamp(value);
+  }
+
+  private resolveDateBase(dateContext?: string | null): { year: number; month: number; day: number } {
+    if (dateContext) {
+      const m = dateContext.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (m) {
+        return { year: parseInt(m[1], 10), month: parseInt(m[2], 10) - 1, day: parseInt(m[3], 10) };
+      }
+    }
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
   }
 
   formatLongDate(value: string): string {
@@ -183,12 +193,42 @@ export class DetailedReportComponent implements OnInit {
     return this.dailyDateFormatter.format(this.normalizeTimestamp(value));
   }
 
-  formatEventTime(value: string | null): string {
-    const parsed = this.normalizeTimeValue(value);
-    if (!parsed || Number.isNaN(parsed.getTime())) {
+  formatEventTime(value: string | null, referenceDate?: string | null): string {
+    if (!value || typeof value !== 'string') {
       return '--:--';
     }
 
+    // Accepts HH:MM, HH:MM:SS, and HH:MM:SS.xxxxxx (Java LocalTime microseconds).
+    const timeMatch = value.match(/^(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?$/);
+    if (timeMatch) {
+      const [, hours, minutes, seconds] = timeMatch;
+
+      // Use the log's actual date so DST rules (EDT vs EST) are applied correctly.
+      let year = 1970, month = 0, day = 1;
+      if (referenceDate) {
+        const dateMatch = referenceDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (dateMatch) {
+          year = parseInt(dateMatch[1], 10);
+          month = parseInt(dateMatch[2], 10) - 1;
+          day = parseInt(dateMatch[3], 10);
+        }
+      }
+
+      // The backend stores as UTC — build in UTC and let formatter convert to America/New_York.
+      const utcDate = new Date(Date.UTC(
+        year, month, day,
+        parseInt(hours, 10),
+        parseInt(minutes, 10),
+        seconds ? parseInt(seconds, 10) : 0
+      ));
+
+      return this.timeFormatter.format(utcDate);
+    }
+
+    const parsed = this.normalizeTimestamp(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return '--:--';
+    }
     return this.timeFormatter.format(parsed);
   }
 

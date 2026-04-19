@@ -42,22 +42,22 @@
                   <td class="py-2 px-3 text-center">{{ daily.workLocationName }}</td>
                   <td class="py-2 px-3 text-center font-mono">
                     <button (click)="openCorrectionModal(daily, 'INGRESO', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
-                      {{ formatEventTime(daily.clockInTime) }}
+                      {{ formatEventTime(daily.clockInTime, daily.date) }}
                     </button>
                   </td>
                   <td class="py-2 px-3 text-center font-mono">
                     <button (click)="openCorrectionModal(daily, 'INICIO_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
-                      {{ formatEventTime(daily.startLunchTime) }}
+                      {{ formatEventTime(daily.startLunchTime, daily.date) }}
                     </button>
                   </td>
                   <td class="py-2 px-3 text-center font-mono">
                     <button (click)="openCorrectionModal(daily, 'FINAL_ALMUERZO', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
-                      {{ formatEventTime(daily.endLunchTime) }}
+                      {{ formatEventTime(daily.endLunchTime, daily.date) }}
                     </button>
                   </td>
                   <td class="py-2 px-3 text-center font-mono">
                     <button (click)="openCorrectionModal(daily, 'SALIDA', weeklySummary.workWeek.id)" class="w-full text-center hover:bg-gray-600 p-1 rounded">
-                      {{ formatEventTime(daily.clockOutTime) }}
+                      {{ formatEventTime(daily.clockOutTime, daily.date) }}
                     </button>
                   </td>
                   <td class="py-2 px-3 text-center font-mono">{{ daily.totalHours.toFixed(2) }}</td>

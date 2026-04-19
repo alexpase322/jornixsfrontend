@@ -43,6 +43,41 @@ export class PayrollReportComponent implements OnInit {
     this.adminService.getWorkers('ALL').subscribe(data => this.workers.set(data));
   }
 
+  // Backend stores LocalTime as UTC on a UTC server. We reinterpret as UTC
+  // using the log's actual date so DST is applied correctly, then format in
+  // the device's local timezone.
+  private readonly localTimeFormatter = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+
+  formatEventTime(value: string | null | undefined, referenceDate?: string | null): string {
+    if (!value) return '--:--';
+    const m = value.match(/^(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?$/);
+    if (!m) return '--:--';
+    const [, hh, mm, ss] = m;
+
+    // Use the log's actual date so DST rules are applied correctly.
+    let year = 1970, month = 0, day = 1;
+    if (referenceDate) {
+      const dm = referenceDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (dm) {
+        year = parseInt(dm[1], 10);
+        month = parseInt(dm[2], 10) - 1;
+        day = parseInt(dm[3], 10);
+      }
+    }
+
+    const utcDate = new Date(Date.UTC(
+      year, month, day,
+      parseInt(hh, 10),
+      parseInt(mm, 10),
+      ss ? parseInt(ss, 10) : 0
+    ));
+    return this.localTimeFormatter.format(utcDate);
+  }
+
   // Filename-safe date fragment: YYYY-MM-DD → MM-DD-YYYY
   private dateForFilename(isoDate: string): string {
     if (!isoDate) return '';

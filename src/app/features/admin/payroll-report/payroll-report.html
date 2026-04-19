@@ -112,10 +112,10 @@
           <tr *ngFor="let daily of r.dailySummariesByWeek[weeklySummary.workWeek.id]" class="border-b border-gray-500">
             <td class="td-style text-center">{{ daily.date | date:'EEEE, MM/dd/yyyy':'America/New_York' }}</td>
             <td class="td-style text-center">{{ daily.workLocationName }}</td>
-            <td class="td-style text-center font-mono">{{ daily.clockInTime?.slice(0, 5) }}</td>
-            <td class="td-style text-center font-mono">{{ daily.startLunchTime?.slice(0, 5) }}</td>
-            <td class="td-style text-center font-mono">{{ daily.endLunchTime?.slice(0, 5) }}</td>
-            <td class="td-style text-center font-mono">{{ daily.clockOutTime?.slice(0, 5) }}</td>
+            <td class="td-style text-center font-mono">{{ formatEventTime(daily.clockInTime, daily.date) }}</td>
+            <td class="td-style text-center font-mono">{{ formatEventTime(daily.startLunchTime, daily.date) }}</td>
+            <td class="td-style text-center font-mono">{{ formatEventTime(daily.endLunchTime, daily.date) }}</td>
+            <td class="td-style text-center font-mono">{{ formatEventTime(daily.clockOutTime, daily.date) }}</td>
             <td class="td-style text-center font-mono">{{ daily.totalHours.toFixed(2) }}</td>
             <td class="td-style text-center font-mono">{{ daily.dailyRate | currency }}</td>
             <td class="td-style text-center font-mono font-bold">{{ daily.totalPay | currency }}</td>
