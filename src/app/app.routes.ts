@@ -23,25 +23,24 @@ import { PaymentSuccess } from './features/payment/payment-success/payment-succe
 import { CompanyInfoComponent } from './features/admin/company-info/company-info';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'complete-registration', component: CompleteRegistrationComponent },
-  { path: 'register-company', component: RegisterCompanyComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
-  {
-    path: 'payment/success',
-    component: PaymentSuccess
-  },
-  { path: '', component: LandingComponent },
-  // Rutas de Trabajador
+  // Public routes (titles indexed by search engines / shown in browser tab)
+  { path: '', component: LandingComponent, title: 'Jornixs — Workforce Time Tracking & Payroll Software' },
+  { path: 'login', component: LoginComponent, title: 'Log in — Jornixs' },
+  { path: 'complete-registration', component: CompleteRegistrationComponent, title: 'Complete your Registration — Jornixs' },
+  { path: 'register-company', component: RegisterCompanyComponent, title: 'Register your Company — Jornixs' },
+  { path: 'forgot-password', component: ForgotPasswordComponent, title: 'Forgot Password — Jornixs' },
+  { path: 'reset-password', component: ResetPasswordComponent, title: 'Reset Password — Jornixs' },
+  { path: 'payment/success', component: PaymentSuccess, title: 'Payment Successful — Jornixs' },
+
+  // Worker routes
   {
     path: 'worker',
     component: MainLayoutComponent,
     canActivate: [authGuard, roleGuard('ROLE_TRABAJADOR')],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
+      { path: 'dashboard', component: DashboardComponent, title: 'My Dashboard — Jornixs' },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'reports/detailed', component: DetailedReportComponent, data: { breadcrumb: 'Mi Reporte Detallado' } }
+      { path: 'reports/detailed', component: DetailedReportComponent, title: 'My Detailed Report — Jornixs', data: { breadcrumb: 'My Detailed Report' } }
     ]
   },
   {
@@ -49,27 +48,28 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'profile', component: ProfileComponent, data: { breadcrumb: 'Mi Perfil' } },
-      { path: 'timesheet-history', component: TimesheetHistoryComponent, data: { breadcrumb: 'Mis Hojas de Horas' } }
+      { path: 'profile', component: ProfileComponent, title: 'My Profile — Jornixs', data: { breadcrumb: 'My Profile' } },
+      { path: 'timesheet-history', component: TimesheetHistoryComponent, title: 'Timesheets — Jornixs', data: { breadcrumb: 'Timesheets' } }
     ]
   },
-  // Rutas de Administrador
+
+  // Admin routes
   {
     path: 'admin',
     component: MainLayoutComponent,
     canActivate: [authGuard, roleGuard('ROLE_ADMINISTRADOR')],
     children: [
-      { path: 'dashboard', component: AdminDashboardComponent, data: { breadcrumb: 'Dashboard' } },
-      { path: 'workers', component: WorkerListComponent, data: { breadcrumb: 'Trabajadores' } },
-      { path: 'workers/:id/edit', component: WorkerEditComponent, data: { breadcrumb: 'Editar Trabajador' } },
-      { path: 'reports/payroll', component: PayrollReportComponent, data: { breadcrumb: 'Reporte de Nomina' } },
-      { path: 'workers/invite', component: WorkerInviteComponent, data: { breadcrumb: 'Invitar Trabajador' } },
-      { path: 'locations', component: LocationListComponent, data: { breadcrumb: 'Lugares de Trabajo' } },
-      { path: 'locations/new', component: LocationForm, data: { breadcrumb: 'Nuevo Lugar' } },
-      { path: 'locations/:id/edit', component: LocationForm, data: { breadcrumb: 'Editar Lugar' } },
-      { path: 'approvals', component: TimesheetApprovalComponent, data: { breadcrumb: 'Aprobaciones' } },
-      { path: 'reports/detailed/:workerId', component: DetailedReportComponent, data: { breadcrumb: 'Reporte Detallado' } },
-      { path: 'company', component: CompanyInfoComponent, data: { breadcrumb: 'Company' } },
+      { path: 'dashboard', component: AdminDashboardComponent, title: 'Admin Dashboard — Jornixs', data: { breadcrumb: 'Dashboard' } },
+      { path: 'workers', component: WorkerListComponent, title: 'Workers — Jornixs', data: { breadcrumb: 'Workers' } },
+      { path: 'workers/:id/edit', component: WorkerEditComponent, title: 'Edit Worker — Jornixs', data: { breadcrumb: 'Edit Worker' } },
+      { path: 'reports/payroll', component: PayrollReportComponent, title: 'Payroll Reports — Jornixs', data: { breadcrumb: 'Payroll Report' } },
+      { path: 'workers/invite', component: WorkerInviteComponent, title: 'Invite Worker — Jornixs', data: { breadcrumb: 'Invite Worker' } },
+      { path: 'locations', component: LocationListComponent, title: 'Workplaces — Jornixs', data: { breadcrumb: 'Workplaces' } },
+      { path: 'locations/new', component: LocationForm, title: 'New Workplace — Jornixs', data: { breadcrumb: 'New Workplace' } },
+      { path: 'locations/:id/edit', component: LocationForm, title: 'Edit Workplace — Jornixs', data: { breadcrumb: 'Edit Workplace' } },
+      { path: 'approvals', component: TimesheetApprovalComponent, title: 'Timesheet Approvals — Jornixs', data: { breadcrumb: 'Approvals' } },
+      { path: 'reports/detailed/:workerId', component: DetailedReportComponent, title: 'Detailed Report — Jornixs', data: { breadcrumb: 'Detailed Report' } },
+      { path: 'company', component: CompanyInfoComponent, title: 'Company Settings — Jornixs', data: { breadcrumb: 'Company' } },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

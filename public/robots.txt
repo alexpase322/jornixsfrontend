@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Allow: /register-company
+Allow: /login
+
+# Block private, authenticated and dynamic routes from being indexed
+Disallow: /admin/
+Disallow: /worker/
+Disallow: /profile
+Disallow: /timesheet-history
+Disallow: /complete-registration
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /payment/
+Disallow: /api/
+
+# Crawl delay (seconds) — be friendly to the server
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://www.jornixs.com/sitemap.xml
