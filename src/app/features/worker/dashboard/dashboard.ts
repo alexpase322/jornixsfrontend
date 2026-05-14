@@ -79,6 +79,20 @@ export class DashboardComponent implements OnInit {
       this.handleError('Geolocation is not supported by this browser.');
       return;
     }
+
+    // Browsers require a secure context (HTTPS) or localhost for geolocation.
+    const isSecure = window.isSecureContext || ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    if (!isSecure) {
+      this.handleError('Location requires HTTPS. Please access the site via a secure connection.');
+      return;
+    }
+
+    const options: PositionOptions = {
+      enableHighAccuracy: true,
+      timeout: 15000,    // 15s — desktops resolve location via WiFi/IP which can be slow
+      maximumAge: 60000  // accept a cached position up to 60s old
+    };
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const coords: ClockInRequest = {
@@ -90,7 +104,24 @@ export class DashboardComponent implements OnInit {
           error: (err) => this.handleError(err.error?.message || 'Error clocking in.'),
         });
       },
-      () => this.handleError('Could not get location. Make sure to grant permissions.')
+      (error: GeolocationPositionError) => {
+        let msg: string;
+        switch (error.code) {
+          case 1: // PERMISSION_DENIED
+            msg = 'Location permission was denied. Allow location access in your browser settings and try again.';
+            break;
+          case 2: // POSITION_UNAVAILABLE
+            msg = 'Could not determine your location. Check your internet connection and try again.';
+            break;
+          case 3: // TIMEOUT
+            msg = 'Location request timed out. Make sure location services are enabled and try again.';
+            break;
+          default:
+            msg = error.message || 'Could not get your location. Please try again.';
+        }
+        this.handleError(msg);
+      },
+      options
     );
   }
 
