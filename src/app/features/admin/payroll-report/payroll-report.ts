@@ -1,8 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild, signal } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin';
 import { Worker, ConsolidatedPayrollReport, DetailedPayrollReport } from '../../../core/models/admin.models';
+import flatpickr from 'flatpickr';
+import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 
 @Component({
   selector: 'app-payroll-report',
@@ -10,7 +12,7 @@ import { Worker, ConsolidatedPayrollReport, DetailedPayrollReport } from '../../
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './payroll-report.html',
 })
-export class PayrollReportComponent implements OnInit {
+export class PayrollReportComponent implements OnInit, AfterViewInit, OnDestroy {
   reportForm: FormGroup;
   workers = signal<Worker[]>([]);
 
@@ -19,8 +21,17 @@ export class PayrollReportComponent implements OnInit {
 
   isLoading = signal<boolean>(false);
 
-  constructor(private fb: FormBuilder, private adminService: AdminService) {
-    // Form uses ISO (YYYY-MM-DD) from native <input type="date"> — matches backend @DateTimeFormat.ISO.DATE
+  @ViewChild('startDateInput') startDateInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('endDateInput') endDateInput?: ElementRef<HTMLInputElement>;
+  private startPicker?: FlatpickrInstance;
+  private endPicker?: FlatpickrInstance;
+
+  constructor(
+    private fb: FormBuilder,
+    private adminService: AdminService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    // Form holds ISO (YYYY-MM-DD) values; flatpickr displays MM/DD/YYYY.
     this.reportForm = this.fb.group({
       reportType: ['CONSOLIDATED', Validators.required],
       workerId: [null],
@@ -41,6 +52,35 @@ export class PayrollReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminService.getWorkers('ALL').subscribe(data => this.workers.set(data));
+  }
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.initFlatpickr('startDate', this.startDateInput);
+    this.initFlatpickr('endDate', this.endDateInput);
+  }
+
+  ngOnDestroy(): void {
+    this.startPicker?.destroy();
+    this.endPicker?.destroy();
+  }
+
+  private initFlatpickr(controlName: 'startDate' | 'endDate', el?: ElementRef<HTMLInputElement>): void {
+    if (!el) return;
+    const instance = flatpickr(el.nativeElement, {
+      dateFormat: 'm/d/Y',          // visible format MM/DD/YYYY
+      altInput: false,
+      allowInput: true,
+      onChange: (selectedDates) => {
+        const d = selectedDates[0];
+        const iso = d
+          ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+          : '';
+        this.reportForm.get(controlName)?.setValue(iso);
+      }
+    });
+    if (controlName === 'startDate') this.startPicker = instance;
+    else this.endPicker = instance;
   }
 
   // Backend stores LocalTime as UTC on a UTC server. We reinterpret as UTC
